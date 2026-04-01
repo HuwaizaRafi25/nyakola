@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Nyakola</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-[#F6F1E9] font-sans">
+
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <!-- <aside class="w-64 bg-[#1F3D2B] text-white p-6 rounded-r-3xl">
+    <h1 class="text-2xl font-bold mb-10">Nyakola.</h1>
+
+    <nav class="space-y-4">
+      <a href="#" class="block bg-[#2E5A3D] px-4 py-2 rounded-lg">Dashboard</a>
+      <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Kelas Saya</a>
+      <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Progress</a>
+      <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Sertifikat</a>
+      <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Pengaturan</a>
+    </nav>
+  </aside> -->
+
+  <aside id="sidebar"
+  class="w-64 bg-[#1F3D2B] text-white p-6 rounded-r-3xl transition-all duration-300">
+
+  <h1 class="text-2xl font-bold mb-10">Nyakola.</h1>
+
+  <nav class="space-y-4">
+    <a href="#" class="block bg-[#2E5A3D] px-4 py-2 rounded-lg">Dashboard</a>
+    <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Kelas Saya</a>
+    <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Progress</a>
+    <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Sertifikat</a>
+    <a href="#" class="block hover:bg-[#2E5A3D] px-4 py-2 rounded-lg">Pengaturan</a>
+  </nav>
+</aside>
+
+  <!-- SIDEBAR -->
+
+  <!-- MAIN -->
+  <main class="flex-1 p-8">
+
+    <!-- TOPBAR -->
+    <!-- <div class="flex justify-between items-center mb-8">
+      <h2 class="text-2xl font-semibold text-[#1F3D2B]">
+        Halo, Zaky 👋
+      </h2>
+
+      <div class="flex items-center gap-4">
+        <input type="text" placeholder="Cari kelas..."
+          class="px-4 py-2 rounded-lg border outline-none">
+
+        <div class="w-10 h-10 bg-[#1F3D2B] rounded-full"></div>
+      </div>
+    </div> --> 
+
+    <div class="flex justify-between items-center mb-8">
+
+  <div class="flex items-center gap-4">
+    <!-- BUTTON TOGGLE -->
+    <button onclick="toggleSidebar()"
+      class="bg-[#1F3D2B] text-white px-3 py-2 rounded-lg">
+      ☰
+    </button>
+
+    <h2 class="text-2xl font-semibold text-[#1F3D2B]">
+      Halo, Zaky 👋
+    </h2>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <input type="text" placeholder="Cari kelas..."
+      class="px-4 py-2 rounded-lg border outline-none">
+
+    <div class="w-10 h-10 bg-[#1F3D2B] rounded-full"></div>
+  </div>
+</div>
+
+    <!-- HERO / RESUME -->
+    <div class="bg-[#1F3D2B] text-white p-6 rounded-2xl mb-8 flex justify-between items-center">
+      <div>
+        <h3 class="text-xl font-semibold mb-2">Lanjutkan Belajar</h3>
+        <p class="text-sm text-gray-300">UI/UX Design Fundamental</p>
+        <button class="mt-4 bg-[#D97706] px-4 py-2 rounded-lg">
+          Lanjutkan
+        </button>
+      </div>
+      <div class="text-6xl opacity-20">N</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-3 gap-6 mb-8">
+
+      <div class="bg-white p-6 rounded-2xl shadow">
+        <p class="text-gray-500">Kelas Diikuti</p>
+        <h3 class="text-2xl font-bold text-[#1F3D2B]">5</h3>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow">
+        <p class="text-gray-500">Progress</p>
+        <h3 class="text-2xl font-bold text-[#1F3D2B]">70%</h3>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow">
+        <p class="text-gray-500">Sertifikat</p>
+        <h3 class="text-2xl font-bold text-[#1F3D2B]">2</h3>
+      </div>
+
+    </div>
+
+    <!-- KELAS SAYA -->
+    <div class="mb-8">
+      <h3 class="text-xl font-semibold text-[#1F3D2B] mb-4">Kelas Saya</h3>
+
+      <div class="grid grid-cols-3 gap-6">
+
+        <div class="bg-white p-4 rounded-2xl shadow">
+          <div class="h-32 bg-[#1F3D2B] rounded-xl mb-4"></div>
+          <h4 class="font-semibold">Web Development</h4>
+          <p class="text-sm text-gray-500 mb-2">Progress 60%</p>
+          <div class="w-full bg-gray-200 h-2 rounded">
+            <div class="bg-[#1F3D2B] h-2 rounded w-[60%]"></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow">
+          <div class="h-32 bg-[#1F3D2B] rounded-xl mb-4"></div>
+          <h4 class="font-semibold">UI/UX Design</h4>
+          <p class="text-sm text-gray-500 mb-2">Progress 40%</p>
+          <div class="w-full bg-gray-200 h-2 rounded">
+            <div class="bg-[#1F3D2B] h-2 rounded w-[40%]"></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow">
+          <div class="h-32 bg-[#1F3D2B] rounded-xl mb-4"></div>
+          <h4 class="font-semibold">Data Science</h4>
+          <p class="text-sm text-gray-500 mb-2">Progress 20%</p>
+          <div class="w-full bg-gray-200 h-2 rounded">
+            <div class="bg-[#1F3D2B] h-2 rounded w-[20%]"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- QUOTE -->
+    <div class="bg-[#F3E9DC] p-6 rounded-2xl text-[#1F3D2B]">
+      <p class="italic text-lg">
+        "Ilmu adalah akar yang pahit, namun buahnya sangat manis."
+      </p>
+      <p class="text-sm mt-2">— Pepatah Nyakola</p>
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+  let isOpen = true;
+
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+
+    if (isOpen) {
+      sidebar.classList.remove("w-64");
+      sidebar.classList.add("w-0", "p-0", "overflow-hidden");
+    } else {
+      sidebar.classList.remove("w-0", "p-0", "overflow-hidden");
+      sidebar.classList.add("w-64", "p-6");
+    }
+
+    isOpen = !isOpen;
+  }
+</script>
+
+</body>
+</html>

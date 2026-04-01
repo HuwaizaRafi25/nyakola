@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk ke Nyakola - Lanjutkan Perjalanan Belajarmu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        olive: '#606C38',
+                        forest: '#283618',
+                        cornsilk: '#FEFAE0',
+                        caramel: '#DDA15E',
+                        copper: '#BC6C25',
+                    },
+                    fontFamily: {
+                        serif: ['Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .bg-pattern {
+            background-color: #283618;
+            background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+        }
+    </style>
+</head>
+<body class="bg-cornsilk min-h-screen flex items-center justify-center p-4 md:p-0">
+
+    <div class="bg-white w-full max-w-5xl min-h-[600px] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row transition-all">
+        
+        <div class="hidden md:flex md:w-1/2 bg-forest p-12 flex-col justify-between relative overflow-hidden">
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-olive/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-copper/10 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10">
+                <a href="/" class="flex items-center gap-2 mb-12">
+                    <div class="w-8 h-8 bg-cornsilk rounded-lg flex items-center justify-center rotate-3">
+                        <span class="text-forest font-bold">N</span>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tighter text-cornsilk font-sans">Nyakola<span class="text-copper">.</span></span>
+                </a>
+                
+                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-20">
+                    "Ilmu adalah akar yang pahit, namun buahnya <span class="italic text-caramel">sangat manis.</span>"
+                </h2>
+                <p class="text-cornsilk/60 mt-6 font-medium tracking-wide">— Pepatah Bijak Nyakola</p>
+            </div>
+
+            <div class="relative z-10 text-cornsilk/40 text-xs tracking-widest uppercase">
+                © 2026 Ekosistem Belajar Nyakola
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center bg-white" x-data="{ showPassword: false }">
+            <div class="mb-10 text-center md:text-left">
+                <h3 class="text-3xl font-serif font-bold text-forest mb-2">Selamat Datang</h3>
+                <p class="text-forest/50 text-sm">Masuk untuk melanjutkan modul dan bertemu mentormu.</p>
+            </div>
+
+            <form action="{% url 'login' %}" method="POST" class="space-y-6">
+              {% csrf_token %}
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Email atau Username</label>
+                    <input type="text" name="username" placeholder="masukkan email kamu" 
+                        class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition text-forest">
+                </div>
+
+                <div class="relative">
+                    <div class="flex justify-between items-center mb-2 ml-1">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-forest/70">Kata Sandi</label>
+                        <a href="#" class="text-[10px] font-bold text-copper hover:underline uppercase tracking-wider">Lupa Sandi?</a>
+                    </div>
+                    <div class="relative">
+                        <input :type="showPassword ? 'text' : 'password'" name="pw" placeholder="••••••••" 
+                            class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition text-forest">
+                        
+                        <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-olive">
+                            <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 011.012-2.34m4.358-4.358A10.04 10.04 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.05 10.05 0 01-1.012 2.34M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.364 6.364l-12.728-12.728" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center ml-1">
+                    <input type="checkbox" id="remember" class="w-4 h-4 text-olive border-slate-300 rounded focus:ring-olive">
+                    <label for="remember" class="ml-3 text-sm text-forest/60">Biarkan saya tetap masuk</label>
+                </div>
+
+                <button type="submit" class="w-full bg-forest text-cornsilk py-4 rounded-2xl font-bold text-lg hover:bg-olive hover:-translate-y-1 transition-all shadow-lg shadow-forest/10">
+                    Masuk Sekarang
+                </button>
+            </form>
+
+            <div class="mt-10 text-center">
+                <p class="text-sm text-forest/50">Belum punya akun? 
+                    <a href="#" class="font-bold text-copper hover:text-forest transition">Daftar Nyakola Gratis</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

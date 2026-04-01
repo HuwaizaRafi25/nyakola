@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nyakola - Berakar, Bertumbuh, Berilmu</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              olive: "#606C38",
+              forest: "#283618",
+              cornsilk: "#FEFAE0",
+              caramel: "#DDA15E",
+              copper: "#BC6C25",
+            },
+            fontFamily: {
+              serif: ["Georgia", "serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      @keyframes fade-in-up {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+      }
+      .glass {
+        background: rgba(254, 250, 224, 0.8);
+        backdrop-filter: blur(10px);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-[#FCF9F0] text-forest font-sans selection:bg-caramel selection:text-white"
+    x-data="{ mobileMenuOpen: false }"
+  >
+    <nav class="fixed w-full z-50 glass border-b border-olive/10">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex justify-between h-20 items-center">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-10 h-10 bg-forest rounded-xl flex items-center justify-center rotate-3 shadow-lg"
+            >
+              <span class="text-cornsilk font-bold text-xl">N</span>
+            </div>
+            <span class="text-2xl font-bold tracking-tighter text-forest"
+              >Nyakola<span class="text-copper">.</span></span
+            >
+          </div>
+
+          <div
+            class="hidden md:flex space-x-10 text-sm font-semibold uppercase tracking-widest text-forest/70"
+          >
+            <a href="#filosofi" class="hover:text-olive transition">Filosofi</a>
+            <a href="#fitur" class="hover:text-olive transition">Ekosistem</a>
+            <a href="#library" class="hover:text-olive transition">Library</a>
+          </div>
+
+          <div class="hidden md:flex items-center gap-6">
+            <a
+              href="login"
+              class="text-sm font-bold text-forest hover:text-copper transition"
+              >Masuk</a
+            >
+            <a
+              href="register"
+              class="bg-forest text-cornsilk px-7 py-3 rounded-full text-sm font-bold hover:bg-olive transition shadow-md"
+              >Mulai Belajar</a
+            >
+          </div>
+
+          <button
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="md:hidden p-2 text-forest"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div
+        x-show="mobileMenuOpen"
+        x-cloak
+        class="md:hidden bg-cornsilk border-b border-olive/20 p-6 space-y-4"
+      >
+        <a href="#filosofi" class="block font-bold">Filosofi</a>
+        <a href="#fitur" class="block font-bold">Ekosistem</a>
+        <a href="#library" class="block font-bold">Library</a>
+        <hr class="border-olive/10" />
+        <a
+          href="#"
+          class="block bg-forest text-cornsilk text-center py-3 rounded-full font-bold"
+          >Daftar Sekarang</a
+        >
+      </div>
+    </nav>
+
+    <section class="relative pt-32 pb-20 overflow-hidden">
+      <div
+        class="max-w-7xl mx-auto px-6 grid md:grid-cols-12 gap-12 items-center"
+      >
+        <div class="md:col-span-7 animate-up">
+          <div
+            class="inline-block px-4 py-1 rounded-full bg-olive/10 text-olive text-xs font-bold uppercase tracking-widest mb-6"
+          >
+            Platform Edukasi Berbasis Karakter
+          </div>
+          <h1
+            class="text-5xl md:text-7xl font-serif font-bold text-forest leading-[1.1] mb-8"
+          >
+            Bukan Sekadar Belajar, <br />
+            <span class="text-copper italic underline decoration-caramel/30"
+              >Tapi Berakar.</span
+            >
+          </h1>
+          <p class="text-lg text-forest/70 max-w-xl leading-relaxed mb-10">
+            Nyakola menghadirkan pengalaman belajar yang menyatu. Dari modul
+            materi, ujian, hingga tugas akhir yang didampingi AI—semuanya
+            dirancang agar Anda tidak hanya tahu, tapi paham dan mampu.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <button
+              class="bg-forest text-cornsilk px-10 py-4 rounded-full font-bold text-lg hover:bg-olive transition-all transform hover:scale-105 shadow-xl"
+            >
+              Jelajahi Kelas
+            </button>
+            <button
+              class="bg-transparent border-2 border-forest/20 text-forest px-10 py-4 rounded-full font-bold text-lg hover:bg-cornsilk transition"
+            >
+              Lihat Kurikulum
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="md:col-span-5 relative animate-up"
+          style="animation-delay: 0.2s"
+        >
+          <div
+            class="relative z-10 bg-caramel/20 rounded-[2rem] p-4 rotate-2 shadow-2xl"
+          >
+            <div
+              class="bg-forest rounded-[1.5rem] aspect-[4/5] overflow-hidden flex items-center justify-center"
+            >
+              <span class="text-cornsilk/20 text-9xl font-serif italic">N</span>
+            </div>
+          </div>
+          <div
+            class="absolute -top-10 -right-10 w-40 h-40 bg-cornsilk rounded-full blur-3xl opacity-60"
+          ></div>
+          <div
+            class="absolute -bottom-10 -left-10 w-60 h-60 bg-olive/20 rounded-full blur-3xl opacity-40"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fitur" class="py-24 bg-forest text-cornsilk">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 class="text-4xl font-serif font-bold mb-6">
+              Ekosistem Nyakola
+            </h2>
+            <p class="text-cornsilk/70 mb-12 text-lg">
+              Kami percaya pendidikan harus utuh. Tiap fitur di Nyakola
+              dirancang untuk saling menguatkan.
+            </p>
+
+            <div class="space-y-8">
+              <div class="flex gap-6 group">
+                <div
+                  class="w-14 h-14 shrink-0 bg-olive rounded-2xl flex items-center justify-center group-hover:bg-caramel transition-colors"
+                >
+                  <svg
+                    class="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                      stroke-width="2"
+                    ></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">
+                    Integrated AI Assistant
+                  </h4>
+                  <p class="text-cornsilk/60">
+                    Tanya apa saja seputar modulmu. AI kami memahami konteks
+                    materi yang sedang kamu pelajari secara mendalam.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex gap-6 group">
+                <div
+                  class="w-14 h-14 shrink-0 bg-olive rounded-2xl flex items-center justify-center group-hover:bg-caramel transition-colors"
+                >
+                  <svg
+                    class="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                      stroke-width="2"
+                    ></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">Learning Library</h4>
+                  <p class="text-cornsilk/60">
+                    Akses koleksi buku, jurnal, dan video edukasi gratis. Ilmu
+                    tidak boleh dibatasi oleh dinding kelas.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div
+              class="bg-olive/20 p-8 rounded-3xl border border-olive/30 mt-12"
+            >
+              <div class="text-4xl font-serif italic text-caramel mb-2">3+</div>
+              <div
+                class="text-sm font-bold uppercase tracking-widest opacity-60"
+              >
+                Role Akses
+              </div>
+            </div>
+            <div class="bg-olive/20 p-8 rounded-3xl border border-olive/30">
+              <div class="text-4xl font-serif italic text-caramel mb-2">
+                100%
+              </div>
+              <div
+                class="text-sm font-bold uppercase tracking-widest opacity-60"
+              >
+                Terintegrasi
+              </div>
+            </div>
+            <div class="bg-olive/20 p-8 rounded-3xl border border-olive/30">
+              <div class="text-4xl font-serif italic text-caramel mb-2">
+                Secure
+              </div>
+              <div
+                class="text-sm font-bold uppercase tracking-widest opacity-60"
+              >
+                Private Class
+              </div>
+            </div>
+            <div
+              class="bg-olive/20 p-8 rounded-3xl border border-olive/30 mt-[-3rem]"
+            >
+              <div class="text-4xl font-serif italic text-caramel mb-2">
+                Global
+              </div>
+              <div
+                class="text-sm font-bold uppercase tracking-widest opacity-60"
+              >
+                Mentor
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-cornsilk">
+      <div class="max-w-7xl mx-auto px-6 text-center mb-16">
+        <h2 class="text-4xl font-serif font-bold text-forest mb-4">
+          Pilih Jalur Belajarmu
+        </h2>
+        <p class="text-forest/60">
+          Nyakola menyediakan ruang bagi semua, dari yang ingin belajar mandiri
+          hingga bimbingan intensif.
+        </p>
+      </div>
+
+      <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-8">
+        <div
+          class="bg-white p-10 rounded-[2.5rem] border border-forest/5 shadow-xl hover:shadow-2xl transition group"
+        >
+          <div
+            class="text-olive font-bold uppercase tracking-widest text-xs mb-4"
+          >
+            Akses Terbuka
+          </div>
+          <h3 class="text-3xl font-serif font-bold mb-4">Kelas Publik</h3>
+          <p class="text-forest/60 mb-8">
+            Belajar bersama komunitas global dengan kurikulum standar industri.
+            Interaksi dinamis dan harga terjangkau.
+          </p>
+          <div class="mb-8">
+            <span class="text-4xl font-bold text-forest"
+              >Mulai dari Gratis</span
+            >
+          </div>
+          <ul class="text-left space-y-4 mb-10 text-sm font-medium">
+            <li class="flex items-center gap-3">
+              <svg
+                class="w-5 h-5 text-olive"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
+              </svg>
+              Akses Modul Standard
+            </li>
+            <li class="flex items-center gap-3">
+              <svg
+                class="w-5 h-5 text-olive"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
+              </svg>
+              Forum Diskusi Umum
+            </li>
+            <li class="flex items-center gap-3">
+              <svg
+                class="w-5 h-5 text-olive"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
+              </svg>
+              AI Assistant Lite
+            </li>
+          </ul>
+          <button
+            class="w-full py-4 rounded-full border-2 border-forest text-forest font-bold hover:bg-forest hover:text-cornsilk transition"
+          >
+            Lihat Kelas
+          </button>
+        </div>
+
+        <div
+          class="bg-forest p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group"
+        >
+          <div class="absolute top-0 right-0 p-6">
+            <svg
+              class="w-20 h-20 text-cornsilk/5 rotate-12"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              ></path>
+            </svg>
+          </div>
+          <div
+            class="text-caramel font-bold uppercase tracking-widest text-xs mb-4"
+          >
+            Eksklusif
+          </div>
+          <h3 class="text-3xl font-serif font-bold text-cornsilk mb-4">
+            Kelas Privat
+          </h3>
+          <p class="text-cornsilk/60 mb-8">
+            Bimbingan intensif 1-on-1 atau grup kecil dengan Mentor pilihan.
+            Memerlukan kode akses khusus.
+          </p>
+          <div class="mb-8 text-cornsilk">
+            <span class="text-4xl font-bold">Investasi Terbaik</span>
+          </div>
+          <ul
+            class="text-left space-y-4 mb-10 text-sm font-medium text-cornsilk/80"
+          >
+            <li class="flex items-center gap-3">
+              <svg
+                class="w-5 h-5 text-caramel"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
+              </svg>
+              Direct Feedback Mentor
+            </li>
+            <li class="flex items-center gap-3">
+              <svg
+                class="w-5 h-5 text-caramel"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
+              </svg>
+              Review Tugas Mendalam
+            </li>
+            <li class="flex items-center gap-3">
+              <svg
+                class="w-5 h-5 text-caramel"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
+              </svg>
+              Full AI Assistant Pro
+            </li>
+          </ul>
+          <button
+            class="w-full py-4 rounded-full bg-caramel text-white font-bold hover:bg-copper transition shadow-lg"
+          >
+            Gunakan Kode Akses
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-forest text-cornsilk/50 py-20 border-t border-olive/20">
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12">
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2 mb-6">
+            <div
+              class="w-8 h-8 bg-cornsilk rounded-lg flex items-center justify-center rotate-3"
+            >
+              <span class="text-forest font-bold">N</span>
+            </div>
+            <span class="text-2xl font-bold tracking-tighter text-cornsilk"
+              >Nyakola<span class="text-copper">.</span></span
+            >
+          </div>
+          <p class="max-w-xs leading-relaxed">
+            Membangun jembatan ilmu melalui teknologi dan budaya belajar yang
+            berakar.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-cornsilk font-bold mb-6">Navigasi</h4>
+          <ul class="space-y-4 text-sm">
+            <li>
+              <a href="#" class="hover:text-caramel transition">Tentang Kami</a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-caramel transition"
+                >Daftar Mentor</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-caramel transition"
+                >Syarat & Ketentuan</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-cornsilk font-bold mb-6">Hubungi Kami</h4>
+          <ul class="space-y-4 text-sm">
+            <li>halo@nyakola.id</li>
+            <li>Bandung, Indonesia</li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="max-w-7xl mx-auto px-6 mt-20 pt-8 border-t border-cornsilk/5 text-center text-xs tracking-[0.2em] uppercase"
+      >
+        © 2026 Nyakola Project • Berakar untuk Masa Depan
+      </div>
+    </footer>
+  </body>
+</html>

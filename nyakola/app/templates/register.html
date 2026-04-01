@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Nyakola - Mulai Perjalanan Belajarmu</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        olive: '#606C38',
+                        forest: '#283618',
+                        cornsilk: '#FEFAE0',
+                        caramel: '#DDA15E',
+                        copper: '#BC6C25',
+                    },
+                    fontFamily: {
+                        serif: ['Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-cornsilk min-h-screen flex items-center justify-center p-4 md:p-0">
+
+    <div class="bg-white w-full max-w-5xl min-h-[650px] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row transition-all" 
+         x-data="{ step: 1, role: '', showPassword: false }">
+        
+        <div class="hidden md:flex md:w-1/2 bg-forest p-12 flex-col justify-between relative overflow-hidden">
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-olive/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-copper/10 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10">
+                <a href="/" class="flex items-center gap-2 mb-12">
+                    <div class="w-8 h-8 bg-cornsilk rounded-lg flex items-center justify-center rotate-3">
+                        <span class="text-forest font-bold">N</span>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tighter text-cornsilk font-sans">Nyakola<span class="text-copper">.</span></span>
+                </a>
+                
+                <div class="flex items-center gap-4 mt-20">
+                    <div :class="step >= 1 ? 'bg-copper' : 'bg-cornsilk/20'" class="w-12 h-1.5 rounded-full transition-colors"></div>
+                    <div :class="step >= 2 ? 'bg-copper' : 'bg-cornsilk/20'" class="w-12 h-1.5 rounded-full transition-colors"></div>
+                    <div :class="step >= 3 ? 'bg-copper' : 'bg-cornsilk/20'" class="w-12 h-1.5 rounded-full transition-colors"></div>
+                </div>
+
+                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 1">
+                    Pilih peranmu untuk <span class="italic text-caramel">menyesuaikan</span> pengalaman belajar.
+                </h2>
+                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 2">
+                    Lengkapi <span class="italic text-caramel">identitas diri</span> untuk profil akademikmu.
+                </h2>
+                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 3">
+                    Satu langkah lagi menuju <span class="italic text-caramel">ekosistem</span> Nyakola.
+                </h2>
+            </div>
+
+            <div class="relative z-10 text-cornsilk/40 text-xs tracking-widest uppercase">
+                © 2026 Ekosistem Belajar Nyakola
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center bg-white">
+            
+            <form action="#" method="POST" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="role" x-model="role">
+
+                <div x-show="step === 1" x-transition>
+                    <div class="mb-10">
+                        <h3 class="text-3xl font-serif font-bold text-forest mb-2">Pilih Peran</h3>
+                        <p class="text-forest/50 text-sm">Bagaimana kamu akan bergabung hari ini?</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div @click="role = 'student'; step = 2" 
+                             class="flex justify-between items-center p-6 border-2 border-slate-100 rounded-3xl cursor-pointer hover:border-olive hover:bg-olive/5 transition-all group">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-forest group-hover:text-olive">Pelajar</span>
+                                <span class="text-xs text-forest/50">Saya ingin belajar & eksplorasi modul</span>
+                            </div>
+                            <span class="text-2xl text-copper">›</span>
+                        </div>
+
+                        <div @click="role = 'mentor'; step = 2" 
+                             class="flex justify-between items-center p-6 border-2 border-slate-100 rounded-3xl cursor-pointer hover:border-olive hover:bg-olive/5 transition-all group">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-forest group-hover:text-olive">Pengajar</span>
+                                <span class="text-xs text-forest/50">Saya ingin berbagi ilmu & membimbing</span>
+                            </div>
+                            <span class="text-2xl text-copper">›</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="step === 2" x-transition class="space-y-4">
+                    <div class="mb-6">
+                        <button type="button" @click="step = 1" class="text-xs font-bold text-copper mb-4 uppercase tracking-widest hover:underline">← Kembali</button>
+                        <h3 class="text-3xl font-serif font-bold text-forest">Data Diri</h3>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Nama Lengkap</label>
+                        <input type="text" name="fullname" placeholder="Nama lengkap kamu" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Username</label>
+                            <input type="text" name="username" placeholder="Username" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Gender</label>
+                            <select name="gender" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                                <option value="M">Laki-laki</option>
+                                <option value="F">Perempuan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Email</label>
+                        <input type="email" name="email" placeholder="contoh@email.com" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                    </div>
+
+                    <div class="relative">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Kata Sandi</label>
+                        <div class="relative">
+                            <input :type="showPassword ? 'text' : 'password'" name="password" placeholder="••••••••" 
+                                class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition text-forest">
+                            <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-olive">
+                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 011.012-2.34m4.358-4.358A10.04 10.04 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.05 10.05 0 01-1.012 2.34M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.364 6.364l-12.728-12.728" /></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="button" @click="step = 3" class="w-full bg-forest text-cornsilk py-4 rounded-2xl font-bold text-lg hover:bg-olive hover:-translate-y-1 transition-all shadow-lg">
+                        Lanjut Konfirmasi
+                    </button>
+                </div>
+
+                <div x-show="step === 3" x-transition class="text-center">
+                    <div class="mb-10">
+                        <div class="w-20 h-20 bg-olive/10 text-olive rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                        <h3 class="text-3xl font-serif font-bold text-forest mb-2">Sudah Siap?</h3>
+                        <p class="text-forest/50 text-sm">Dengan menekan tombol di bawah, kamu menyetujui syarat dan ketentuan Nyakola.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <button type="submit" class="w-full bg-forest text-cornsilk py-4 rounded-2xl font-bold text-lg hover:bg-olive hover:-translate-y-1 transition-all shadow-lg">
+                            Daftar Sekarang
+                        </button>
+                        <button type="button" @click="step = 2" class="text-sm font-bold text-forest/40 hover:text-copper transition">Perbaiki Data Kembali</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="mt-10 text-center">
+                <p class="text-sm text-forest/50">Sudah punya akun? 
+                    <a href="/login" class="font-bold text-copper hover:text-forest transition">Masuk di sini</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
