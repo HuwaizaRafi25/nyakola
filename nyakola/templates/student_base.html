@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name|default:"AttenDTI" }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="shortcut icon" href="{% static 'assets/images/icons/dti_icon.png' %}" type="image/x-icon">
+    
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <script src="{% static 'js/app.js' %}" defer></script>
+    
+    <link rel="stylesheet" href="{% static 'assets/css/clock.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/sidebar.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+
+<body class="bg-gray-50 overflow-y-scroll">
+    <nav class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="w-full mx-auto px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="/" class="flex items-center justify-center">
+                        {% if appLogo %}
+                            <img src="{{ appLogo.url }}" class="w-8 h-8 mr-2">
+                        {% else %}
+                            <img src="{% static 'assets/images/icons/dti_icon.png' %}" class="w-8 h-8 mr-2">
+                        {% endif %}
+                        <span class="flex text-2xl font-bold sm:text-3xl lg:text-xl">
+                            <span class="text-[#2daabd]">
+                                {{ app_name|default:"AttendDTI" }}
+                            </span>
+                        </span>
+                    </a>
+                </div>
+                <div class="hidden lg:block">
+                    <div class="ml-10 text-base flex duration-[1500ms] items-baseline space-x-4">
+                        <a href="/overview"
+                            class="{% if '/overview' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} px-3 py-2 rounded-md font-medium transition-colors relative group">
+                            <span>Overview</span>
+                            <span class="{% if '/overview' in request.path %}w-[85%]{% else %}w-0{% endif %} absolute bottom-0 left-[7%] h-0.5 bg-blue-600 transition-all group-hover:w-[85%]"></span>
+                        </a>
+                        <a href="/attendances"
+                            class="{% if '/attendances' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} px-3 py-2 rounded-md font-medium transition-colors relative group">
+                            <span>Attendance</span>
+                            <span class="{% if '/attendances' in request.path %}w-[85%]{% else %}w-0{% endif %} absolute bottom-0 left-[7%] h-0.5 bg-blue-600 transition-all group-hover:w-[85%]"></span>
+                        </a>
+                        <a href="/announcement"
+                            class="{% if '/announcement' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} px-3 py-2 rounded-md font-medium transition-colors relative group">
+                            <span>Announcement</span>
+                            <span class="{% if '/announcement' in request.path %}w-[85%]{% else %}w-0{% endif %} absolute bottom-0 left-[7%] h-0.5 bg-blue-600 transition-all group-hover:w-[85%]"></span>
+                        </a>
+                        <a href="/tasks"
+                            class="{% if '/tasks' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} px-3 py-2 rounded-md font-medium transition-colors relative group">
+                            <span>Task</span>
+                            <span class="{% if '/tasks' in request.path %}w-[85%]{% else %}w-0{% endif %} absolute bottom-0 left-[7%] h-0.5 bg-blue-600 transition-all group-hover:w-[85%]"></span>
+                        </a>
+                        <a href="/job"
+                            class="{% if '/job' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} px-3 py-2 rounded-md font-medium transition-colors relative group">
+                            <span>Job</span>
+                            <span class="{% if '/job' in request.path %}w-[85%]{% else %}w-0{% endif %} absolute bottom-0 left-[7%] h-0.5 bg-blue-600 transition-all group-hover:w-[85%]"></span>
+                        </a>
+                        {% if perms.app_name.manage_dues %}
+                            <a href="/dues"
+                                class="{% if '/dues' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} px-3 py-2 rounded-md font-medium transition-colors relative group">
+                                <span>Dues</span>
+                                <span class="{% if '/dues' in request.path %}w-[85%]{% else %}w-0{% endif %} absolute bottom-0 left-[7%] h-0.5 bg-blue-600 transition-all group-hover:w-[85%]"></span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-gray-600 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-bell text-2xl"></i>
+                        <span class="absolute top-0 right-0 inline-flex items-center justify-center w-2 h-2 font-bold leading-none text-white transform translate-x-1/6 translate-y-1 bg-red-500 rounded-full"></span>
+                    </button>
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" x-cloak class="flex items-center focus:outline-none">
+                            {% if request.user.profile_pic %}
+                                <img class="w-8 h-8 rounded-full object-cover bg-gray-200" src="{{ request.user.profile_pic.url }}" alt="Profile">
+                            {% else %}
+                                <img class="w-8 h-8 rounded-full object-cover bg-gray-200" src="{% static 'assets/images/userPlaceHolder.png' %}" alt="Profile">
+                            {% endif %}
+                        </button>
+                        <div x-show="open" x-cloak @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg p-2 z-50">
+                            <a href="{% url 'user_view' request.user.username %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+                                <i class="fas fa-user mr-2"></i>Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+                                <i class="fas fa-cog mr-2"></i>Settings
+                            </a>
+                            <a href="#" class="px-4 py-2 text-red-600 hover:bg-red-100 rounded-md flex items-center space-x-2" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                            <form id="logout-form" action="{% url 'logout' %}" method="POST" class="hidden">
+                                {% csrf_token %}
+                            </form>
+                        </div>
+                    </div>
+                    <div class="lg:hidden">
+                        <button class="text-gray-600 hover:text-gray-900 focus:outline-none" id="mobileMenuBtn">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hidden md:hidden" id="mobileMenu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="/overview" class="{% if '/overview' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                    <i class="fas fa-home mr-2 {% if '/overview' in request.path %}text-blue-600{% else %}text-gray-600{% endif %}"></i> Overview
+                </a>
+                <a href="/attendances" class="{% if '/attendances' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                    <i class="fas fa-calendar-check mr-2 {% if '/attendances' in request.path %}text-blue-600{% else %}text-gray-600{% endif %}"></i> Attendance
+                </a>
+                <a href="/announcement" class="{% if '/announcement' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                    <i class="fas fa-bullhorn mr-2 {% if '/announcement' in request.path %}text-blue-600{% else %}text-gray-600{% endif %}"></i> Announcement
+                </a>
+                <a href="/tasks" class="{% if '/tasks' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                    <i class="fas fa-tasks mr-2 {% if '/tasks' in request.path %}text-blue-600{% else %}text-gray-600{% endif %}"></i> Task
+                </a>
+                <a href="/job" class="{% if '/job' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                    <i class="fas fa-briefcase mr-2 {% if '/job' in request.path %}text-blue-600{% else %}text-gray-600{% endif %}"></i> Job
+                </a>
+                <a href="/dues" class="{% if '/dues' in request.path %}text-blue-600{% else %}text-gray-600{% endif %} block px-3 py-2 rounded-md text-base font-medium transition-colors">
+                    <i class="fas fa-briefcase mr-2 {% if '/dues' in request.path %}text-blue-600{% else %}text-gray-600{% endif %}"></i> Dues
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main class="w-full px-12 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+    </body>
+
+</html>

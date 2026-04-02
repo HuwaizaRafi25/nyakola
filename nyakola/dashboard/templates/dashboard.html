@@ -1,0 +1,118 @@
+{% extends parent_base %}
+
+{% block content %}
+    <!-- ISI DASHBOARD KAMU DI SINI (bisa beda-beda per role kalau mau) -->
+    
+    {% if request.session.role == 'admin' %}
+        <!-- Main Content Area: LMS Dashboard Version -->
+<div class="p-6 space-y-6">
+    <!-- Grid Baris Pertama: Welcome Card & LMS Quick Stats -->
+    <div class="grid grid-cols-12 gap-6">
+        
+        <!-- Welcome Card (LMS Theme) -->
+        <div class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-sm border border-[#BC6C25]/20 p-6 flex justify-between items-center relative overflow-hidden">
+            <div class="z-10">
+                <h4 class="text-xl font-bold text-[#283618] mb-2">Semangat Mengelola, Zaky! 🎓</h4>
+                <p class="text-gray-600 text-sm mb-4 leading-relaxed">
+                    Ada <span class="font-bold text-[#606C38]">12 modul baru</span> yang menunggu antrean moderasi. <br> 
+                    Aktivitas mahasiswa meningkat <span class="text-[#BC6C25] font-bold">15%</span> pagi ini.
+                </p>
+                <button class="bg-[#606C38] text-[#FEFAE0] px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#283618] transition-all shadow-md">
+                    Moderasi Modul
+                </button>
+            </div>
+            <!-- Ilustrasi LMS -->
+            <div class="hidden sm:block">
+                <img src="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/assets/img/illustrations/man-with-laptop-light.png" alt="LMS Admin" class="h-32 object-contain">
+            </div>
+        </div>
+
+        <!-- Quick LMS Stats -->
+        <div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-[#BC6C25]/20 flex flex-col items-center justify-center text-center">
+                <div class="w-10 h-10 bg-[#606C38]/10 rounded-lg flex items-center justify-center mb-2 text-xl">📖</div>
+                <p class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Kursus Aktif</p>
+                <h5 class="text-lg font-bold text-[#283618]">42</h5>
+                <p class="text-[10px] text-[#606C38] font-bold">6 Baru</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-[#BC6C25]/20 flex flex-col items-center justify-center text-center">
+                <div class="w-10 h-10 bg-[#BC6C25]/10 rounded-lg flex items-center justify-center mb-2 text-xl">👨‍🎓</div>
+                <p class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Siswa Baru</p>
+                <h5 class="text-lg font-bold text-[#283618]">154</h5>
+                <p class="text-[10px] text-[#606C38] font-bold">+24%</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid Baris Kedua: Learning Analytics & Recent Activities -->
+    <div class="grid grid-cols-12 gap-6">
+        <!-- Grafik Engagement Belajar -->
+        <div class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-sm border border-[#BC6C25]/20 p-6">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h5 class="font-bold text-[#283618]">Engagement Mahasiswa</h5>
+                    <p class="text-xs text-gray-400">Total penyelesaian modul per bulan</p>
+                </div>
+                <div class="flex space-x-4 text-[10px] font-bold uppercase tracking-wider">
+                    <span class="flex items-center text-[#606C38]"><i class="w-2 h-2 bg-[#606C38] rounded-full mr-2"></i> Modul Selesai</span>
+                    <span class="flex items-center text-[#DDA15E]"><i class="w-2 h-2 bg-[#DDA15E] rounded-full mr-2"></i> Quiz Selesai</span>
+                </div>
+            </div>
+            <!-- Area Grafik -->
+            <div class="h-64 bg-[#FEFAE0]/40 rounded-lg border-2 border-dashed border-[#DDA15E]/40 flex flex-col items-center justify-center space-y-2">
+                <span class="text-3xl opacity-30">📊</span>
+                <p class="text-[#BC6C25] font-medium italic text-sm">Visualisasi Chart.js / ApexCharts di sini</p>
+            </div>
+        </div>
+
+        <!-- Kolom Kanan: Top Mentor & Report -->
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+            <!-- Card Mentor Terbaik (Berdasarkan Rating Mahasiswa) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-[#BC6C25]/20">
+                <h5 class="text-sm font-bold text-[#283618] mb-4 uppercase tracking-tight">Mentor Terpopuler</h5>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-[#DDA15E] flex items-center justify-center text-xs font-bold text-white">F</div>
+                            <span class="text-sm font-medium text-[#283618]">Dr. Stranger</span>
+                        </div>
+                        <span class="text-xs font-bold text-[#606C38]">⭐ 4.9</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-[#BC6C25] flex items-center justify-center text-xs font-bold text-white">Z</div>
+                            <span class="text-sm font-medium text-[#283618]">anonymous</span>
+                        </div>
+                        <span class="text-xs font-bold text-[#606C38]">⭐ 5.0</span>
+                    </div>
+                </div>
+                <hr class="my-4 border-[#DDA15E]/20">
+                <div class="text-center">
+                    <a href="#" class="text-[10px] font-bold text-[#BC6C25] hover:underline uppercase">Lihat Peringkat Lengkap</a>
+                </div>
+            </div>
+
+            <!-- Card Download Recap Laporan LMS -->
+            <div class="bg-[#283618] p-6 rounded-xl shadow-lg border border-[#606C38]">
+                <div class="flex items-center space-x-3 mb-2">
+                    <span class="text-xl">📋</span>
+                    <h5 class="text-[#FEFAE0] font-bold">Rekapitulasi LMS</h5>
+                </div>
+                <p class="text-[#DDA15E] text-[11px] mb-4 leading-relaxed">Ekspor data kehadiran dan progres belajar mahasiswa ke dalam format Excel atau PDF.</p>
+                <button class="w-full py-2.5 bg-[#BC6C25] text-[#FEFAE0] rounded-lg text-[10px] font-black hover:bg-[#DDA15E] transition-all uppercase tracking-widest shadow-md">
+                    Unduh Laporan April
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- konten admin -->
+        
+    {% elif request.session.role == 'student' %}
+        <h1 class="text-3xl font-bold text-gray-800">Student Dashboard</h1>
+        <!-- konten student -->
+         
+        
+    {% endif %}
+    
+{% endblock %}
