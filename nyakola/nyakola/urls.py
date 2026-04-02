@@ -18,8 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from users.views import UserSinglePageView, UserDeleteView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
+    path('dashboard', include('dashboard.urls')),
+    # path('users', UserSinglePageView.as_view(), name='manage_users'),
+    # path('users/delete/<int:pk>/', UserDeleteView.as_view(), name='delete_user'),
+
 ]

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -26,6 +27,9 @@
             }
         }
     </script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="bg-cornsilk min-h-screen flex items-center justify-center p-4 md:p-0">
 
@@ -53,10 +57,10 @@
                 <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 1">
                     Pilih peranmu untuk <span class="italic text-caramel">menyesuaikan</span> pengalaman belajar.
                 </h2>
-                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 2">
+                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 2" x-cloak>
                     Lengkapi <span class="italic text-caramel">identitas diri</span> untuk profil akademikmu.
                 </h2>
-                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 3">
+                <h2 class="text-4xl font-serif font-bold text-cornsilk leading-tight mt-8" x-show="step === 3" x-cloak>
                     Satu langkah lagi menuju <span class="italic text-caramel">ekosistem</span> Nyakola.
                 </h2>
             </div>
@@ -68,7 +72,7 @@
 
         <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center bg-white">
             
-            <form action="#" method="POST" class="space-y-6">
+            <form id="registerForm" action="/login/" method="POST" class="space-y-6">
                 {% csrf_token %}
                 <input type="hidden" name="role" x-model="role">
 
@@ -99,25 +103,46 @@
                     </div>
                 </div>
 
-                <div x-show="step === 2" x-transition class="space-y-4">
+                <div x-show="step === 2" x-transition x-cloak class="space-y-4">
                     <div class="mb-6">
                         <button type="button" @click="step = 1" class="text-xs font-bold text-copper mb-4 uppercase tracking-widest hover:underline">← Kembali</button>
                         <h3 class="text-3xl font-serif font-bold text-forest">Data Diri</h3>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Nama Lengkap</label>
-                        <input type="text" name="fullname" placeholder="Nama lengkap kamu" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                        <label for="fullname" class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Nama Lengkap</label>
+                        <input type="text" id="fullname" name="fullname" placeholder="Nama lengkap kamu" required
+                            class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Username</label>
-                            <input type="text" name="username" placeholder="Username" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                        <div class="flex flex-col">
+                            <label for="username" class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Username" required
+                                class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                            
+                            <div class="mt-3 space-y-2 ml-1 text-[11px] font-medium" id="username-requirements">
+                                <div id="user-req-length" class="flex items-center text-red-400 transition-colors">
+                                    <span class="status-icon mr-2">✕</span> Minimal 4 karakter
+                                </div>
+                                <div id="user-req-format" class="flex items-center text-red-400 transition-colors">
+                                    <span class="status-icon mr-2">✕</span> Hanya huruf dan angka
+                                </div>
+                                <div id="user-req-unique" class="flex items-center text-green-600 transition-colors">
+                                    <span class="status-icon mr-2">✓</span> Username tersedia
+                                </div>
+                            </div>
+                            
+                            <small id="usernameError" class="text-[10px] text-red-500 mt-1 hidden italic ml-1 leading-tight">
+                                This username is already use, please try another one.
+                            </small>
                         </div>
+
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Gender</label>
-                            <select name="gender" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                            <label for="gender" class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Gender</label>
+                            <select id="gender" name="gender" required
+                                class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                                <option value="">Pilih</option>
                                 <option value="M">Laki-laki</option>
                                 <option value="F">Perempuan</option>
                             </select>
@@ -125,28 +150,47 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Email</label>
-                        <input type="email" name="email" placeholder="contoh@email.com" class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                        <label for="email" class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Email</label>
+                        <input type="email" id="email" name="email" placeholder="contoh@email.com" required
+                            class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition">
+                        <small id="emailError" class="text-[10px] text-red-500 mt-1 hidden italic ml-1 leading-tight">
+                            This email is already use, please try another one.
+                        </small>
                     </div>
 
                     <div class="relative">
-                        <label class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Kata Sandi</label>
+                        <label for="password" class="block text-xs font-bold uppercase tracking-widest text-forest/70 mb-2 ml-1">Kata Sandi</label>
                         <div class="relative">
-                            <input :type="showPassword ? 'text' : 'password'" name="password" placeholder="••••••••" 
+                            <input :type="showPassword ? 'text' : 'password'" id="password" name="password" placeholder="Min. 8 Karakter" required
                                 class="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive/20 focus:border-olive transition text-forest">
                             <button type="button" @click="showPassword = !showPassword" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-olive">
                                 <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 011.012-2.34m4.358-4.358A10.04 10.04 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.05 10.05 0 01-1.012 2.34M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.364 6.364l-12.728-12.728" /></svg>
+                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.05 10.05 0 011.012-2.34m4.358-4.358A10.04 10.04 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.05 10.05 0 01-1.012 2.34M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.364 6.364l-12.728-12.728" /></svg>
                             </button>
+                        </div>
+
+                        <div class="mt-3 space-y-2 ml-1 text-[11px] font-medium" id="password-requirements">
+                            <div id="req-length" class="flex items-center text-red-400 transition-colors">
+                                <span class="status-icon mr-2">✕</span> Minimal 8 karakter
+                            </div>
+                            <div id="req-name-email" class="flex items-center text-green-600 transition-colors">
+                                <span class="status-icon mr-2">✓</span> Tidak boleh mengandung nama dan email
+                            </div>
+                            <div id="req-symbol" class="flex items-center text-red-400 transition-colors">
+                                <span class="status-icon mr-2">✕</span> Mengandung angka atau simbol
+                            </div>
+                            <div id="password-strength" class="font-bold mt-1 text-red-400">
+                                Password Strength: <span id="strength-text">Weak</span>
+                            </div>
                         </div>
                     </div>
 
-                    <button type="button" @click="step = 3" class="w-full bg-forest text-cornsilk py-4 rounded-2xl font-bold text-lg hover:bg-olive hover:-translate-y-1 transition-all shadow-lg">
+                    <button type="button" id="btnNext" @click="step = 3" class="w-full bg-forest text-cornsilk py-4 rounded-2xl font-bold text-lg hover:bg-olive hover:-translate-y-1 transition-all shadow-lg">
                         Lanjut Konfirmasi
                     </button>
                 </div>
 
-                <div x-show="step === 3" x-transition class="text-center">
+                <div x-show="step === 3" x-transition x-cloak class="text-center">
                     <div class="mb-10">
                         <div class="w-20 h-20 bg-olive/10 text-olive rounded-full flex items-center justify-center mx-auto mb-6">
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
@@ -156,10 +200,16 @@
                     </div>
 
                     <div class="space-y-4">
-                        <button type="submit" class="w-full bg-forest text-cornsilk py-4 rounded-2xl font-bold text-lg hover:bg-olive hover:-translate-y-1 transition-all shadow-lg">
-                            Daftar Sekarang
+                        <button type="submit" 
+                                id="btnSubmit" 
+                                disabled 
+                                class="w-full text-cornsilk py-4 rounded-2xl font-bold text-lg hover:-translate-y-1 transition-all shadow-lg cursor-not-allowed"
+                                style="background-color: #9CA3AF;"> Daftar Sekarang
                         </button>
-                        <button type="button" @click="step = 2" class="text-sm font-bold text-forest/40 hover:text-copper transition">Perbaiki Data Kembali</button>
+                        
+                        <button type="button" @click="step = 2" class="text-sm font-bold text-forest/40 hover:text-copper transition">
+                            Perbaiki Data Kembali
+                        </button>
                     </div>
                 </div>
             </form>
@@ -172,5 +222,6 @@
         </div>
     </div>
 
+    <script src="{% static 'js/register.js' %}"></script>
 </body>
 </html>
