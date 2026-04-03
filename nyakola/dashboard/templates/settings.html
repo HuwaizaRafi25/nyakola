@@ -1,0 +1,21 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+    <!-- ISI DASHBOARD KAMU DI SINI (bisa beda-beda per role kalau mau) -->
+    
+    {% if request.session.role == 'admin' %}
+        <!-- Main Content Area: LMS Dashboard Version -->
+<div class="p-6 space-y-6">
+    <!-- Grid Baris Pertama: Welcome Card & LMS Quick Stats -->
+    <h1>settings nih</h1>
+</div>
+        <!-- konten admin -->
+        
+    {% elif request.session.role == 'student' %}
+        <h1 class="text-3xl font-bold text-gray-800">Student Dashboard</h1>
+        <!-- konten student -->
+         
+        
+    {% endif %}
+    
+{% endblock %}

@@ -29,7 +29,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://1a44-103-48-27-8.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://florida-briary-siena.ngrok-free.dev']
+
+APPEND_SLASH = False
 
 # Application definition
 
@@ -41,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'dashboard'
+    'dashboard',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +127,6 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

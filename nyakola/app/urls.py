@@ -6,5 +6,5 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', views.logout, name='logout'),
-    path('check-availability/', views.check_availability, name='check-availability'),
+    path('ajax/check-availability/', views.check_availability, name='check-availability'),
 ]

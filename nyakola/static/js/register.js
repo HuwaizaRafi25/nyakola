@@ -2,27 +2,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registerForm');
     const btnSubmit = document.getElementById('btnSubmit');
     
-    // Status pengecekan ketersediaan di Database (Dari Server)
     let isUsernameTaken = false;
     let isEmailTaken = false;
 
-    // 1. Selector Semua Elemen Input
     const getInputs = () => ({
         fullname: document.getElementById('fullname'),
         username: document.getElementById('username'),
         gender: document.getElementById('gender'),
         email: document.getElementById('email'),
         password: document.getElementById('password'),
-        
-        // Elemen Pesan Error Merah
-        usernameError: document.getElementById('username-taken-error'),
         emailError: document.getElementById('emailError'),
-        
-        // Elemen Checklist Username
-        reqUserLength: document.getElementById('req-user-length') 
+        reqUserLength: document.getElementById('req-user-length'),
+        topNotification: document.getElementById('top-notification') 
     });
 
-    // 2. Selector Elemen Checklist Password
     const getRequirements = () => ({
         reqLength: document.getElementById('req-length'),
         reqNameEmail: document.getElementById('req-name-email'),
@@ -30,67 +23,34 @@ document.addEventListener('DOMContentLoaded', () => {
         strengthText: document.getElementById('strength-text')
     });
 
-    // 3. Fungsi Update Visual Checklist (Mengubah ✕ Merah menjadi ✓ Hijau)
     function updateRequirementUI(el, isValid) {
         if (!el) return;
         const icon = el.querySelector('.status-icon');
         if (isValid) {
-            el.classList.remove('text-red-400');
-            el.classList.add('text-green-600');
+            el.classList.replace('text-red-400', 'text-green-600');
             if (icon) icon.innerText = '✓';
         } else {
-            el.classList.remove('text-green-600');
-            el.classList.add('text-red-400');
+            el.classList.replace('text-green-600', 'text-red-400');
             if (icon) icon.innerText = '✕';
         }
     }
 
-    // 4. Fungsi Cek ke Server (Django -> MongoDB)
-    async function checkAvailability(field, value, errorEl) {
-        // Jangan cek ke server jika kurang dari 3 karakter untuk menghemat beban server
-        if (value.length < 3) {
-            if (errorEl) {
-                errorEl.classList.add('hidden');
-                errorEl.classList.remove('flex');
-            }
-            return false; 
-        }
-
+    async function checkAvailability(field, value) {
+        if (value.length < 3) return false; 
         try {
-            // Memanggil alamat di urls.py Django
-            const response = await fetch(`/check-availability/?${field}=${value}`);
+            const response = await fetch(`/ajax/check-availability/?${field}=${encodeURIComponent(value)}`);
             const data = await response.json();
-            
-            if (data.is_taken) {
-                // Jika sudah ada yang pakai, munculkan pesan error merah
-                if (errorEl) {
-                    errorEl.classList.remove('hidden');
-                    errorEl.classList.add('flex'); // Pakai flex agar icon dan teks sejajar
-                }
-                return true; 
-            } else {
-                // Jika aman, sembunyikan pesan error
-                if (errorEl) {
-                    errorEl.classList.add('hidden');
-                    errorEl.classList.remove('flex');
-                }
-                return false; 
-            }
+            return data.is_taken; 
         } catch (error) {
-            console.error(`Gagal mengecek ${field}:`, error);
+            console.error("Gagal cek ketersediaan:", error);
             return false;
         }
     }
 
-    // 5. Fungsi Validasi Utama (Dijalankan setiap kali user mengetik)
     async function validate() {
         const inputs = getInputs();
         const reqs = getRequirements();
         
-        // Cek agar tidak error jika elemen belum dimuat (Safety check)
-        if (!inputs.fullname || !inputs.password) return;
-
-        // Ambil dan bersihkan nilai input
         const data = {
             fullname: inputs.fullname.value.trim().toLowerCase(),
             username: inputs.username.value.trim(),
@@ -98,92 +58,86 @@ document.addEventListener('DOMContentLoaded', () => {
             password: inputs.password.value
         };
 
-        // --- Logika Checklist Username ---
+        // 1. Validasi Syarat
         const isUsernameLongEnough = data.username.length >= 4;
-        updateRequirementUI(inputs.reqUserLength, isUsernameLongEnough);
-
-        // --- Logika Checklist Password ---
-        const isLongEnough = data.password.length >= 8;
-        const hasNumberOrSymbol = /[\d!@#$%^&*(),.?":{}|<>]/.test(data.password);
-        const emailPrefix = data.email.split('@')[0];
+        const isPasswordLong = data.password.length >= 8;
+        const hasSymbol = /[\d!@#$%^&*(),.?":{}|<>]/.test(data.password);
         
-        // Password tidak boleh mengandung nama lengkap atau nama sebelum @ di email
+        const emailPrefix = data.email.split('@')[0];
         const containsSensitive = (data.fullname && data.password.toLowerCase().includes(data.fullname)) || 
-                                  (emailPrefix && data.password.toLowerCase().includes(emailPrefix));
+                                 (emailPrefix && data.password.toLowerCase().includes(emailPrefix));
         
         const isPasswordSecure = data.password !== "" && !containsSensitive;
 
-        // Update UI untuk syarat password
-        updateRequirementUI(reqs.reqLength, isLongEnough);
-        updateRequirementUI(reqs.reqSymbol, hasNumberOrSymbol);
+        // 2. Update UI Checklist
+        updateRequirementUI(inputs.reqUserLength, isUsernameLongEnough);
+        updateRequirementUI(reqs.reqLength, isPasswordLong);
+        updateRequirementUI(reqs.reqSymbol, hasSymbol);
         updateRequirementUI(reqs.reqNameEmail, isPasswordSecure);
 
-        // Update Text Kekuatan Password (Weak / Strong)
-        if (isLongEnough && hasNumberOrSymbol && isPasswordSecure) {
-            reqs.strengthText.innerText = "Strong";
+        // 3. Update Teks "Lemah" ke "Kuat"
+        const isPasswordValid = isPasswordLong && hasSymbol && isPasswordSecure;
+        
+        if (isPasswordValid) {
+            reqs.strengthText.innerText = "Kuat";
             reqs.strengthText.parentElement.className = "font-bold mt-1 text-green-600";
         } else {
-            reqs.strengthText.innerText = "Weak";
+            reqs.strengthText.innerText = "Lemah";
             reqs.strengthText.parentElement.className = "font-bold mt-1 text-red-400";
         }
 
-        // --- Logika Tombol Submit Aktif / Mati ---
-        const isAllFilled = data.fullname !== "" && 
-                            data.username.length >= 4 && // Syarat username min 4 karakter
-                            inputs.gender.value !== "" && 
-                            data.email.includes('@');
+        // 4. Kunci Tombol Submit
+        const isAllFilled = data.fullname && isUsernameLongEnough && inputs.gender.value && data.email.includes('@');
 
-        const isPasswordValid = isLongEnough && hasNumberOrSymbol && isPasswordSecure;
-
-        // Tombol Aktif JIKA: 
-        // 1. Semua terisi benar
-        // 2. Password kuat
-        // 3. Username belum ada di server
-        // 4. Email belum ada di server
         if (isAllFilled && isPasswordValid && !isUsernameTaken && !isEmailTaken) {
             btnSubmit.disabled = false;
-            btnSubmit.style.backgroundColor = "#606C38"; // Warna Hijau Olive
-            btnSubmit.style.cursor = "pointer";
+            btnSubmit.style.backgroundColor = "#606C38";
             btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
             btnSubmit.disabled = true;
-            btnSubmit.style.backgroundColor = "#9CA3AF"; // Warna Abu-abu mati
-            btnSubmit.style.cursor = "not-allowed";
+            btnSubmit.style.backgroundColor = "#9CA3AF";
             btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
         }
     }
 
-    // 6. Event Listener: Menangkap ketikan user
     let typingTimer;
-    form.addEventListener('input', (e) => {
-        const inputs = getInputs();
-
-        // Pengecekan Database HANYA untuk Username dan Email
-        // Menggunakan "debounce" (menunggu 0.5 detik setelah user berhenti mengetik)
-        // Agar tidak me-request ke server setiap satu huruf diketik
+    form.addEventListener('input', async (e) => {
+        // --- PENAMBAHAN FITUR LOWERCASE REAL-TIME ---
         if (e.target.id === 'username' || e.target.id === 'email') {
+            e.target.value = e.target.value.toLowerCase();
+        }
+        // --------------------------------------------
+
+        const inputs = getInputs();
+        const val = e.target.value.trim();
+
+        if (e.target.id === 'username') {
             clearTimeout(typingTimer);
             typingTimer = setTimeout(async () => {
-                if (e.target.id === 'username') {
-                    isUsernameTaken = await checkAvailability('username', e.target.value.trim(), inputs.usernameError);
-                } else if (e.target.id === 'email') {
-                    isEmailTaken = await checkAvailability('email', e.target.value.trim(), inputs.emailError);
+                isUsernameTaken = await checkAvailability('username', val);
+                if (isUsernameTaken) {
+                    inputs.topNotification.classList.remove('hidden');
+                    inputs.topNotification.innerHTML = `
+                        <div class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-200 rounded-lg bg-blue-50">
+                            <span class="font-medium mr-2">Info:</span> Username "${val}" sudah terdaftar. Gunakan yang lain!
+                        </div>`;
+                    e.target.classList.add('border-red-500', 'text-red-500');
+                } else {
+                    inputs.topNotification.classList.add('hidden');
+                    e.target.classList.remove('border-red-500', 'text-red-500');
                 }
-                validate(); // Panggil validasi lagi setelah dapat jawaban dari server
-            }, 500); 
+                validate();
+            }, 500);
         }
 
-        // Jalankan validasi untuk SEMUA perubahan form (seperti password, nama, gender)
-        if (['INPUT', 'SELECT'].includes(e.target.tagName)) {
+        if (e.target.id === 'email') {
+            isEmailTaken = await checkAvailability('email', val);
+            if (inputs.emailError) {
+                inputs.emailError.classList.toggle('hidden', !isEmailTaken);
+            }
             validate();
         }
-    });
 
-    // 7. Pengamanan Lapisan Terakhir saat Tombol Daftar Ditekan
-    form.addEventListener('submit', function(e) {
-        if (btnSubmit.disabled) {
-            e.preventDefault(); // Batalkan pengiriman form
-            alert("Harap lengkapi semua persyaratan dan pastikan data belum terdaftar!");
-        }
+        validate();
     });
 });

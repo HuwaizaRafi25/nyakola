@@ -80,10 +80,10 @@ body.dark {
 }
 
 
-.icon svg {
-    width: 1em; /* Sesuaikan ukuran SVG */
+.sidebar .icon svg {
+    width: 1em;
     height: 1em;
-    fill: currentColor; /* Gunakan warna dari elemen induknya */
+    fill: currentColor;
 }
 
 .sidebar .text {
