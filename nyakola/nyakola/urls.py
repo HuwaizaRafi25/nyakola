@@ -23,8 +23,11 @@ from users.views import UserSinglePageView, UserDeleteView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
-    path('dashboard', include('dashboard.urls')),
+    path('dashboard/', include('dashboard.urls')),
     # path('users', UserSinglePageView.as_view(), name='manage_users'),
     # path('users/delete/<int:pk>/', UserDeleteView.as_view(), name='delete_user'),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
