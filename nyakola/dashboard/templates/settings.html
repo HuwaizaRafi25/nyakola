@@ -2,20 +2,100 @@
 
 {% block content %}
     <!-- ISI DASHBOARD KAMU DI SINI (bisa beda-beda per role kalau mau) -->
-    
+    <style>
+        :root {
+            --olive-leaf: #606C38;
+            --black-forest: #283618;
+            --cornsilk: #FEFAE0;
+            --light-caramel: #DDA15E;
+            --copper: #BC6C25;
+        }
+        .profile-card { border-radius: 15px; background: white; border: 1px solid var(--light-caramel); }
+        .nav-tabs .nav-link.active { color: var(--olive-leaf); border-bottom: 3px solid var(--olive-leaf); font-weight: bold; }
+        .btn-olive { background-color: var(--olive-leaf); color: white; border-radius: 8px; }
+        .btn-olive:hover { background-color: var(--black-forest); color: white; }
+    </style>
+
     {% if request.session.role == 'admin' %}
         <!-- Main Content Area: LMS Dashboard Version -->
 <div class="p-6 space-y-6">
     <!-- Grid Baris Pertama: Welcome Card & LMS Quick Stats -->
     <h1>settings nih</h1>
-</div>
         <!-- konten admin -->
-        
+    <div class="row mt-4">
+                <div class="col-md-4 text-center">
+                    <div class="profile-card p-4 shadow-sm">
+                        <img src="{% if user.profile_pic %}{{ user.profile_pic }}{% else %}https://ui-avatars.com/api/?name={{ user.fullname }}&background=606C38&color=FEFAE0{% endif %}" class="rounded-circle mb-3" width="120">
+                        <h4 class="fw-bold">{{ user.fullname }}</h4>
+                        <span class="badge bg-dark">ADMIN</span>
+                        <button class="btn btn-olive w-100 mt-3" data-bs-toggle="modal" data-bs-target="#editModal">Edit Admin Profile</button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="profile-card p-4 shadow-sm">
+                        <h5 class="fw-bold" style="color: var(--copper)">Admin Information</h5>
+                        <hr>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Username:</strong> @{{ user.username }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     {% elif request.session.role == 'student' %}
         <h1 class="text-3xl font-bold text-gray-800">Student Dashboard</h1>
         <!-- konten student -->
-         
+         <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="profile-card p-4 text-center shadow-sm">
+                        <img src="{% if user.profile_pic %}{{ user.profile_pic }}{% else %}https://ui-avatars.com/api/?name={{ user.fullname }}&background=606C38&color=FEFAE0{% endif %}" class="rounded-circle mb-3" width="100">
+                        <h5 class="fw-bold">{{ user.fullname }}</h5>
+                        <p class="text-muted small">NIM: {{ user.nim|default:"225443047" }}</p>
+                        <button class="btn btn-olive btn-sm w-100" data-bs-toggle="modal" data-bs-target="#editModal">Update Profile</button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="profile-card p-4 shadow-sm">
+                        <h6 class="fw-bold" style="color: var(--olive-leaf)">Data Mahasiswa</h6>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <small class="text-muted">Email</small>
+                                <p><strong>{{ user.email }}</strong></p>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Phone</small>
+                                <p><strong>{{ user.phone|default:"-" }}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
     {% endif %}
-    
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form method="POST" class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="fullname" class="form-control" value="{{ user.fullname }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" value="{{ user.phone }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-olive">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}
