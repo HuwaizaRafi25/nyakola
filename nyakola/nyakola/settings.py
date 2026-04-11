@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = ['https://florida-briary-siena.ngrok-free.dev']
 
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 # Application definition
 
@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'app',
     'dashboard',
     'core',
+    'users',
+    'modules',
+    'classes',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +133,5 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'users.User'

@@ -32,19 +32,11 @@ const routes = {
     navLinks: {
         1: "/dashboard/",
         2: "/dashboard/settings/",
-        3: "/announcement",
-        4: "/job",
-        // 5: "/documents",
-        5: "/dues",
         6: "/application-settings",
         7: "/activity-logs",
     },
     subNavLinks: {
-        1: "/users",
-        2: "/roles-permissions",
-        3: "/locations",
-        4: "/help-center",
-        5: "/contact-support",
+        1: "/users/",
     },
 };
 

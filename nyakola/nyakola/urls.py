@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('users/', include('users.urls')),
     # path('users', UserSinglePageView.as_view(), name='manage_users'),
     # path('users/delete/<int:pk>/', UserDeleteView.as_view(), name='delete_user'),
 
