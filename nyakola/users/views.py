@@ -1,89 +1,57 @@
-from django.shortcuts import redirect, render
-from django.http import JsonResponse
-from django.views.generic import ListView, UpdateView, DetailView, DeleteView
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.db.models import Q
-from django.contrib.auth import get_user_model
+from django.http import HttpResponse
+from django.contrib.auth.hashers import make_password, check_password
+from db_connection import users_collection
+from bson import ObjectId
+from django.http import JsonResponse
+import re
 
-User = get_user_model()
+def index(request):
+    return render(request, 'index.html')
 
-# Halaman utama manajemen user
-class UserSinglePageView(ListView):
-    model = User
-    template_name = 'manage_user.html'
-    context_object_name = 'semua_user' # Ini yang dipakai di HTML untuk nampilin data
+def user_list(request):
+    users = list(users_collection.find())
+    return render(request, 'manage_user.html', {'users': users})
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = UserCreationForm() 
-        return context
+def add_user(request):
+    if request.method == 'POST':
+        user_data = {
+            'username': request.POST.get('username'),
+            'fullname': request.POST.get('full_name'),
+            'email': request.POST.get('email'),
+            'role': request.POST.get('role'),
+        }
+        users_collection.insert_one(user_data)
+        messages.success(request, "User berhasil ditambahkan!")
+        return redirect('user_list')
+    return render(request, 'user_form.html')
 
-    def post(self, request, *args, **kwargs):
-        # 1. Ambil data dari request
-        u_name = request.POST.get('username')
-        f_name = request.POST.get('fullname')
-        email = request.POST.get('email')
-        pwd = request.POST.get('password')
-        
-        # Data tambahan dari form gambar (untuk pengembangan ke depan)
-        phone = request.POST.get('phone')
-        gender = request.POST.get('gender')
-        birth_date = request.POST.get('birth_date')
-        
-        error_exists = False
+def update_user(request, id):
+    if request.method == 'POST':
+        update_data = {
+            '$set': {
+                'username': request.POST.get('username'),
+                'full_name': request.POST.get('full_name'),
+                'email': request.POST.get('email'),
+                'role': request.POST.get('role'),
+            }
+        }
+        users_collection.update_one({'_id': ObjectId(id)}, update_data)
+        return redirect('user_list')
+    
+    user = users_collection.find_one({'_id': ObjectId(id)})
+    return render(request, 'user_form.html', {'user': user})
 
-        # 2. Cek Username Ganda
-        if User.objects.filter(username__iexact=u_name).exists():
-            messages.error(request, "Username sudah terdaftar.", extra_tags='username_error')
-            error_exists = True
+def delete_user(request, id):
+    users_collection.delete_one({'_id': ObjectId(id)})
+    messages.success(request, "User berhasil dihapus!")
+    return redirect('user_list')
 
-        # 3. Cek Fullname Ganda
-        if User.objects.filter(first_name__iexact=f_name).exists():
-            messages.error(request, "Nama lengkap sudah terdaftar.", extra_tags='fullname_error')
-            error_exists = True
-
-        # 4. Cek Email Ganda
-        if User.objects.filter(email__iexact=email).exists():
-            messages.error(request, "Email sudah terdaftar.", extra_tags='email_error')
-            error_exists = True
-
-        # 5. Jika ada error, kembali ke halaman
-        if error_exists:
-            return self.get(request, *args, **kwargs)
-
-        # 6. Simpan Data
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.first_name = f_name
-            user.email = email
-            # Jika kamu punya model Profile untuk menyimpan phone/gender/birth_date, 
-            # simpan di sini setelah user.save()
-            user.save()
-            messages.success(request, "Siswa berhasil ditambahkan!")
-            return redirect('manage_users')
-            
-        return self.get(request, *args, **kwargs)
-
-# --- Endpoint AJAX & View lainnya tetap sama ---
-def search_user_json(request):
-    query = request.GET.get('q', '')
-    users = User.objects.filter(username__icontains=query)[:10] if query else []
-    results = [{'username': user.username, 'id': user.id} for user in users]
-    return JsonResponse({'data': results})
-
-class UserUpdateView(UpdateView):
-    model = User
-    fields = ['username', 'email']
-    success_url = reverse_lazy('manage_users')
-
-class UserDetailView(DetailView):
-    model = User
-    template_name = 'users/user_detail.html'
-
-class UserDeleteView(DeleteView):
-    model = User
-    success_url = reverse_lazy('manage_users')
+def manage_users(request):
+    users = list(users_collection.find())
+    
+    # DEBUG: Cek di terminal/console apakah datanya ada isinya
+    print("DEBUG - Data User dari MongoDB:", users)
+    
+    return render(request, 'manage_user.html', {'semua_user': users})
