@@ -3,9 +3,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password, check_password
 from db_connection import users_collection
-from django.db import models
 from django.http import JsonResponse
-from django.contrib.auth.models import User
 import re
 
 def index(request):
@@ -66,7 +64,6 @@ def login(request):
         else:
             messages.error(request, 'Username atau Password salah!')
             return redirect('login') 
-
     else:
         if 'username' in request.session:
             return redirect('dashboard')
