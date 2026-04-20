@@ -12,6 +12,8 @@ def index(request):
 
 def user_list(request):
     users = list(users_collection.find())
+    for user in users:
+        user['id'] = str(user['_id'])
     return render(request, 'manage_user.html', {'users': users})
 
 def add_user(request):
@@ -28,25 +30,29 @@ def add_user(request):
     
     return redirect('user_list') 
 
+
 def update_user(request, id):
     if request.method == 'POST':
         update_data = {
             '$set': {
                 'username': request.POST.get('username'),
-                'full_name': request.POST.get('full_name'),
+                'full_name': request.POST.get('fullname'),
                 'email': request.POST.get('email'),
-                'role': request.POST.get('role'),
             }
         }
         users_collection.update_one({'_id': ObjectId(id)}, update_data)
+        messages.success(request, "User berhasil diupdate!")
         return redirect('user_list')
-    
-    user = users_collection.find_one({'_id': ObjectId(id)})
-    return render(request, 'user_form.html', {'user': user})
+
+from bson.errors import InvalidId
 
 def delete_user(request, id):
-    users_collection.delete_one({'_id': ObjectId(id)})
-    messages.success(request, "User berhasil dihapus!")
+    try:
+        if request.method == "POST":
+            users_collection.delete_one({'_id': ObjectId(id)})
+            messages.success(request, "User berhasil dihapus!")
+    except InvalidId:
+        messages.error(request, "ID tidak valid!")
     return redirect('user_list')
 
 def manage_users(request):

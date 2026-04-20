@@ -37,6 +37,7 @@ const routes = {
     },
     subNavLinks: {
         1: "/users/",
+        2: "/classes/",
     },
 };
 
