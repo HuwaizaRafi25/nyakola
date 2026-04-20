@@ -18,14 +18,15 @@ def add_user(request):
     if request.method == 'POST':
         user_data = {
             'username': request.POST.get('username'),
-            'fullname': request.POST.get('full_name'),
+            'full_name': request.POST.get('fullname'),  # FIX INI
             'email': request.POST.get('email'),
-            'role': request.POST.get('role'),
+            'role': 'siswa',  # FIX: jangan ambil dari form (nggak ada)
         }
+
         users_collection.insert_one(user_data)
         messages.success(request, "User berhasil ditambahkan!")
-        return redirect('user_list')
-    return render(request, 'user_form.html')
+    
+    return redirect('user_list') 
 
 def update_user(request, id):
     if request.method == 'POST':
