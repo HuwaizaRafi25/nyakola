@@ -1,10 +1,15 @@
 from django.urls import path
 from . import views
 
-urlpatterns = [
-    path('', views.UserSinglePageView.as_view(), name='manage_users'),
-    path('search-json/', views.search_user_json, name='search_user_json'),
-    path('detail/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
-    path('update/<int:pk>/', views.UserUpdateView.as_view(), name='user_update'),
-    path('delete/<int:pk>/', views.UserDeleteView.as_view(), name='user_delete'),
+urlpatterns = [# READ: Menampilkan list user
+    path('', views.user_list, name='user_list'), 
+    
+    # CREATE: Halaman/fungsi tambah user
+    path('add/', views.add_user, name='add_user'), 
+    
+    # UPDATE: Edit user berdasarkan ID
+    path('edit/<str:id>/', views.update_user, name='edit_user'), 
+    
+    # DELETE: Hapus user berdasarkan ID
+    path('delete/<str:id>/', views.delete_user, name='delete_user')
 ]
