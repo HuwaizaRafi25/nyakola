@@ -25,7 +25,8 @@ try:
     
     db = client['db_nyakola']
     users_collection = db['users']
-    
+    modules_collection = db['modules']
+
     print("✅ Berhasil terhubung ke MongoDB Atlas")
 
 except ConnectionFailure:
