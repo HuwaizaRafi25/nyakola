@@ -26,6 +26,7 @@ try:
     db = client['db_nyakola']
     users_collection = db['users']
     modules_collection = db['modules']
+    classes_collection = db['classes']
 
     print("✅ Berhasil terhubung ke MongoDB Atlas")
 

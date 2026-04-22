@@ -16,19 +16,48 @@ def user_list(request):
         user['id'] = str(user['_id'])
     return render(request, 'manage_user.html', {'users': users})
 
+# def add_user(request):
+#     if request.method == 'POST':
+#         user_data = {
+#             'username': request.POST.get('username'),
+#             'full_name': request.POST.get('fullname'),  # FIX INI
+#             'email': request.POST.get('email'),
+#             'role': 'siswa',  # FIX: jangan ambil dari form (nggak ada)
+#         }
+
+#         users_collection.insert_one(user_data)
+#         messages.success(request, "User berhasil ditambahkan!")
+    
+#     return redirect('user_list') 
+
 def add_user(request):
     if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        fullname = request.POST.get('fullname')
+
+        # 🔥 CEK USERNAME
+        if users_collection.find_one({"username": username}):
+            messages.error(request, "Username sudah digunakan!", extra_tags="username_error")
+            return redirect('user_list')
+
+        # 🔥 CEK EMAIL
+        if users_collection.find_one({"email": email}):
+            messages.error(request, "Email sudah digunakan!", extra_tags="email_error")
+            return redirect('user_list')
+
+        # ✅ kalau aman → insert
         user_data = {
-            'username': request.POST.get('username'),
-            'full_name': request.POST.get('fullname'),  # FIX INI
-            'email': request.POST.get('email'),
-            'role': 'siswa',  # FIX: jangan ambil dari form (nggak ada)
+            'username': username,
+            'full_name': fullname,
+            'email': email,
+            'role': 'siswa',
         }
 
         users_collection.insert_one(user_data)
         messages.success(request, "User berhasil ditambahkan!")
-    
-    return redirect('user_list') 
+
+    return redirect('user_list')
 
 
 def update_user(request, id):
@@ -62,3 +91,5 @@ def manage_users(request):
     print("DEBUG - Data User dari MongoDB:", users)
     
     return render(request, 'manage_user.html', {'semua_user': users})
+
+

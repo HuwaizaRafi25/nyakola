@@ -1,6 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include # Pastikan ada 'include'
+from django.urls import path
+from . import views
 
 urlpatterns = [
+    path('<>/chapter/<>', views.showModule, name="showModule"), 
     
 ]
