@@ -1,0 +1,214 @@
+{% extends 'admin_base.html' %} {% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="p-6 space-y-6">
+  <div
+    class="bg-white rounded-xl shadow-sm border border-[#BC6C25]/20 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+  >
+    <div class="flex items-center gap-4">
+      <button
+        class="border border-[#777] text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors"
+      >
+        <span class="mr-1">⚙️</span> Filter
+      </button>
+      <div>
+        <h1 class="text-2xl font-bold text-[#283618]">
+          Class > Module Management
+        </h1>
+        <p class="text-xs text-gray-500 mt-1">
+          Kelola kelas, mentor, dan modul pembelajaran
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <div
+        class="relative w-full md:w-auto text-gray-400 focus-within:text-[#606C38]"
+      >
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3">🔍</span>
+        <input
+          type="text"
+          placeholder="Search class/module..."
+          class="w-full md:w-64 pl-10 pr-4 py-2 border border-[#BC6C25]/30 rounded-lg focus:outline-none focus:border-[#606C38] focus:ring-1 focus:ring-[#606C38] text-sm text-gray-700"
+        />
+      </div>
+      <button
+        class="bg-[#BC6C25] text-[#FEFAE0] px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#DDA15E] transition-all shadow-md whitespace-nowrap"
+      >
+        + Add Class
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="bg-white rounded-xl shadow-sm border border-[#BC6C25]/20 overflow-hidden"
+  >
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr
+            class="bg-[#606C38]/10 text-[#283618] border-b border-[#BC6C25]/20"
+          >
+            <th class="p-4 font-bold text-sm">No</th>
+            <th class="p-4 font-bold text-sm">Class Name</th>
+            <th class="p-4 font-bold text-sm">Creator/Mentor</th>
+            <th class="p-4 font-bold text-sm">Other/Details</th>
+            <th class="p-4 font-bold text-sm">Status</th>
+            <th class="p-4 font-bold text-sm">Action</th>
+          </tr>
+        </thead>
+        <tbody class="text-sm text-gray-700">
+          {% for kelas in daftar_kelas %}
+          <tr
+            class="class-row border-b border-gray-100 hover:bg-[#FEFAE0]/40 cursor-pointer transition-colors group"
+            onclick="toggleModules('module-{{ forloop.counter }}', this)"
+          >
+            <td class="p-4 align-top">
+              <div class="flex items-center gap-2">
+                <span
+                  class="arrow-icon transform transition-transform duration-300 text-[10px] text-[#BC6C25] group-[.is-active]:rotate-90"
+                  >▶</span
+                >
+                <span class="font-bold">{{ forloop.counter }}.</span>
+              </div>
+            </td>
+            <td class="p-4 align-top font-semibold text-[#283618]">
+              {{ kelas.nama_kelas }}
+            </td>
+            <td class="p-4 align-top">{{ kelas.mentor }}</td>
+            <td class="p-4 align-top text-xs text-gray-500">
+              <span class="block">👥 {{ kelas.jumlah_siswa }} students</span>
+              <span class="block mt-1">📚 {{ kelas.total_modul }} modules</span>
+            </td>
+            <td class="p-4 align-top">
+              <span
+                class="bg-[#606C38]/10 text-[#606C38] px-2 py-1 rounded text-xs font-bold"
+                >{{ kelas.status }}</span
+              >
+            </td>
+            <td class="p-4 align-top">
+              <a
+                href="#"
+                class="text-[#007bff] hover:text-[#0056b3] font-semibold hover:underline"
+                >CRUD</a
+              >
+            </td>
+          </tr>
+
+          <tr
+            id="module-{{ forloop.counter }}"
+            class="hidden bg-[#FAFAFA] border-b border-gray-200"
+          >
+            <td colspan="6" class="p-0">
+              <div class="p-4 pl-14 md:pl-20 border-l-4 border-[#606C38]/50">
+                <table
+                  class="w-full text-left text-sm border border-gray-200 rounded-lg overflow-hidden"
+                >
+                  <thead class="bg-gray-100 text-gray-600">
+                    <tr>
+                      <th
+                        class="p-3 font-semibold text-xs uppercase tracking-wider"
+                      >
+                        No
+                      </th>
+                      <th
+                        class="p-3 font-semibold text-xs uppercase tracking-wider"
+                      >
+                        Module
+                      </th>
+                      <th
+                        class="p-3 font-semibold text-xs uppercase tracking-wider"
+                      >
+                        Other/Details
+                      </th>
+                      <th
+                        class="p-3 font-semibold text-xs uppercase tracking-wider"
+                      >
+                        Dates
+                      </th>
+                      <th
+                        class="p-3 font-semibold text-xs uppercase tracking-wider"
+                      >
+                        Status
+                      </th>
+                      <th
+                        class="p-3 font-semibold text-xs uppercase tracking-wider"
+                      >
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for modul in kelas.modul_list %}
+                    <tr
+                      class="border-b border-gray-100 hover:bg-white transition-colors"
+                    >
+                      <td class="p-3">{{ forloop.counter }}</td>
+                      <td class="p-3 font-medium text-[#283618]">
+                        {{ modul.judul }}
+                      </td>
+                      <td class="p-3 text-xs text-gray-500">
+                        {{ modul.submodul }} submodules<br />{{ modul.chapters }} bab
+                      </td>
+                      <td class="p-3 text-xs text-gray-500">
+                        Updated: {{ modul.tanggal_update }}
+                      </td>
+                      <td class="p-3">
+                        <span class="text-[#606C38] font-bold text-xs"
+                          >{{ modul.status }}</span
+                        >
+                      </td>
+                      <td class="p-3">
+                        <a
+                          href="#"
+                          class="text-[#007bff] hover:underline font-semibold text-xs"
+                          >CRUD</a
+                        >
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td
+                        colspan="6"
+                        class="p-4 text-center text-gray-400 italic"
+                      >
+                        Belum ada modul di kelas ini.
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="p-4 text-center text-gray-500">
+              Tidak ada data kelas ditemukan.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleModules(targetId, rowElement) {
+    // Ambil elemen sub-tabel yang dituju
+    const targetMenu = document.getElementById(targetId);
+
+    // Toggle visibilitas sub-tabel (hapus/tambah class 'hidden' dari Tailwind)
+    if (targetMenu.classList.contains("hidden")) {
+      targetMenu.classList.remove("hidden");
+      // Tambahkan class penanda aktif ke baris utama (trigger panah berputar & highlight warna)
+      rowElement.classList.add("is-active", "bg-[#FEFAE0]/40");
+    } else {
+      targetMenu.classList.add("hidden");
+      // Kembalikan ke state semula
+      rowElement.classList.remove("is-active", "bg-[#FEFAE0]/40");
+    }
+  }
+</script>
+{% endblock %}

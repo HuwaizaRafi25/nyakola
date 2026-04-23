@@ -29,7 +29,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://florida-briary-siena.ngrok-free.dev']
+# CSRF_TRUSTED_ORIGINS = ['https://demise-reoccur-autism.ngrok-free.dev']
+CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.dev"]
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
 
 APPEND_SLASH = True
 

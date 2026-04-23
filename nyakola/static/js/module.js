@@ -1,28 +1,3 @@
-// ==== Admin Layout
-
-// Notif JS
-document.addEventListener("DOMContentLoaded", function () {
-    const notifButton = document.getElementById("notifButton");
-    const notifCard = document.getElementById("notif");
-    const closeNotif = document.getElementById("closeNotif");
-
-    notifButton.addEventListener("click", function () {
-        notifCard.classList.remove("hidden");
-        notifCard.classList.add("flex");
-    });
-
-    closeNotif.addEventListener("click", function () {
-        notifCard.classList.add("hidden");
-        notifCard.classList.remove("flex");
-    });
-
-    notifCard.addEventListener("click", function (e) {
-        if (e.target === notifCard) {
-            notifCard.classList.add("hidden");
-            notifCard.classList.remove("flex");
-        }
-    });
-});
 
 // Sidebar JS
 const navLinks = document.querySelectorAll(".nav-link");
@@ -187,14 +162,14 @@ document.addEventListener('DOMContentLoaded', () => {
             sidebar.classList.remove('close');
             sidebar.classList.remove('-translate-x-full');
             sidebarLayer.classList.add('hidden');
-            home.classList.add('lg:left-[296px]');
+            home.classList.add('lg:right-[296px]');
             home.style.width = 'calc(100% - 296px)';
         } else {
             // Untuk layar di bawah lg - sidebar defaultnya tertutup
             sidebar.classList.add('close');
             sidebar.classList.add('-translate-x-full');
             sidebarLayer.classList.add('hidden');
-            home.classList.remove('lg:left-[296px]');
+            home.classList.remove('lg:right-[296px]');
             home.style.width = '100%';
         }
     };
@@ -207,13 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 sidebar.classList.add('close');
                 sidebar.classList.add('-translate-x-full');
                 home.style.width = '100%';
-                home.classList.remove('lg:left-[296px]');
+                home.classList.remove('lg:right-[296px]');
             } else {
                 // Jika sidebar tertutup, buka sidebar
                 sidebar.classList.remove('close');
                 sidebar.classList.remove('-translate-x-full');
                 home.style.width = 'calc(100% - 296px)';
-                home.classList.add('lg:left-[296px]');
+                home.classList.add('lg:right-[296px]');
             }
         } else {
             // Toggle untuk layar di bawah lg

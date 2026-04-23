@@ -113,6 +113,7 @@
         </li>
       </div>
 
+      {% if request.session.role == 'admin' %}
       <div class="menu">
         <li class="nav-link">
           <div class="navhead">
@@ -143,6 +144,32 @@
           </ul>
         </div>
       </div>
+      {% else %}
+        <div class="menu">
+        <li class="nav-link">
+          <div class="navhead">
+            <span class="icon flex justify-center items-center">
+              {% inline_svg 'images/icons/dataMaster.svg' %}
+            </span>
+            <div class="flex justify-between items-center w-full">
+              <span class="text nav-text">{% if request.session.role == 'mentor' %}Your Classes{% else %}Enrolled Classes{% endif %}</span>
+              <span
+                class="icon bx bx-chevron-down scale-75 opacity-85 icon transition-transform flex justify-center items-center"
+                style="margin-left: 40px; rotate: 180deg">
+                {% inline_svg 'images/icons/chevron.svg' %}
+              </span>
+            </div>
+          </div>
+        </li>
+        <div class="submenu">
+          <ul class="submenu-links flex flex-col gap-y-3 mt-3">
+            <li class="sub-nav-link">
+              <span class="text sub-nav-text" data-subNavText="1">Users</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      {% endif %}
 
       <div class="menu">
         <li class="nav-link" data-navLink="2">
