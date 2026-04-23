@@ -24,7 +24,8 @@
 body {
     min-height: 100vh;
     height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     transition: var(--tran-05);
 }
 
@@ -284,7 +285,7 @@ body.dark .sidebar li a:hover .text {
 }
 
 .menu-bar::-webkit-scrollbar {
-    display: none;
+    display: block;
 }
 
 .sidebar .menu-bar .mode {

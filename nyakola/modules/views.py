@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from bson import ObjectId
 from django.core.paginator import Paginator
 from db_connection import modules_collection # Pastikan ini import-nya benar
 
@@ -17,3 +18,23 @@ def manage_modul(request):
         'query': request.GET.get('q', '')
     }
     return render(request, 'manage_module.html', context)
+
+def showModule(request, module_id, chapter_id):
+    # Ambil data modul berdasarkan module_id dan chapter_id
+    module_data = modules_collection.find_one({"id_module": module_id})
+
+    target_bab = None
+    for sub in module_data.get("sub_modul", []):
+        for bab in sub.get("bab", []):
+            if bab.get("id_bab") == chapter_id:
+                target_bab = bab
+                break    
+
+    if not module_data:
+        return render(request, '404.html', status=404)  # Halaman 404 jika data tidak ditemukan
+    
+    context = {
+        'module': module_data,
+        'chapter': target_bab
+    }
+    return render(request, 'module_page.html', context)
