@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from modules.views import manage_modul 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from bson.errors import InvalidId
 from db_connection import classes_collection, modules_collection
+from django.http import JsonResponse
+
 
 def manage_classes(request):
     # 1. Ambil raw data dari database
@@ -107,3 +110,35 @@ def add_module(request, class_id):
         )
 
     return redirect('manage_class')
+
+from bson.errors import InvalidId
+
+def get_class_details(request, class_id):
+    try:
+        obj_id = ObjectId(class_id)
+        kelas = classes_collection.find_one({"_id": obj_id})
+
+        if not kelas:
+            return JsonResponse({"error": "Kelas tidak ditemukan"}, status=404)
+
+        # FIX DI SINI
+        mentor = kelas.get('id_teacher')
+        if isinstance(mentor, ObjectId):
+            mentor = str(mentor)
+
+        siswa = kelas.get('daftar_siswa', [])
+        siswa = [str(s) if isinstance(s, ObjectId) else s for s in siswa]
+
+        data = {
+            "judul_kelas": kelas.get('nama_kelas', 'Unnamed Class'),
+            "nama_mentor": mentor,
+            "siswa": siswa
+        }
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        print("ERROR ASLI:", e)
+        return JsonResponse({"error": "Internal Server Error"}, status=500)
+    
+    

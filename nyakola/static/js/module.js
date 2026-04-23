@@ -157,54 +157,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const home = document.querySelector('.home');
 
     const updateSidebarState = () => {
-        if (window.innerWidth >= 1024) {
-            // Untuk layar lg ke atas - sidebar defaultnya terbuka
-            sidebar.classList.remove('close');
-            sidebar.classList.remove('-translate-x-full');
-            sidebarLayer.classList.add('hidden');
-            home.classList.add('lg:right-[296px]');
-            home.style.width = 'calc(100% - 296px)';
-        } else {
-            // Untuk layar di bawah lg - sidebar defaultnya tertutup
-            sidebar.classList.add('close');
-            sidebar.classList.add('-translate-x-full');
-            sidebarLayer.classList.add('hidden');
-            home.classList.remove('lg:right-[296px]');
-            home.style.width = '100%';
-        }
-    };
+    if (window.innerWidth >= 1024) {
+        sidebar.classList.remove('close');
+        sidebarLayer.classList.add('hidden');
+        home.style.marginRight = '296px';
+    } else {
+        sidebar.classList.add('close');
+        sidebarLayer.classList.add('hidden');
+        home.style.marginRight = '0';
+    }
+};
 
     const toggleSidebar = () => {
-        if (window.innerWidth >= 1024) {
-            // Toggle untuk layar lg ke atas
-            if (!sidebar.classList.contains('close')) {
-                // Jika sidebar terbuka, tutup sidebar
-                sidebar.classList.add('close');
-                sidebar.classList.add('-translate-x-full');
-                home.style.width = '100%';
-                home.classList.remove('lg:right-[296px]');
-            } else {
-                // Jika sidebar tertutup, buka sidebar
-                sidebar.classList.remove('close');
-                sidebar.classList.remove('-translate-x-full');
-                home.style.width = 'calc(100% - 296px)';
-                home.classList.add('lg:right-[296px]');
-            }
+    if (window.innerWidth >= 1024) {
+        sidebar.classList.toggle('close');
+
+        if (sidebar.classList.contains('close')) {
+            home.style.marginRight = '0';
         } else {
-            // Toggle untuk layar di bawah lg
-            if (sidebar.classList.contains('close')) {
-                // Jika sidebar tertutup, buka sidebar (overlay)
-                sidebar.classList.remove('close');
-                sidebar.classList.remove('-translate-x-full');
-                sidebarLayer.classList.remove('hidden');
-            } else {
-                // Jika sidebar terbuka, tutup sidebar
-                sidebar.classList.add('close');
-                sidebar.classList.add('-translate-x-full');
-                sidebarLayer.classList.add('hidden');
-            }
+            home.style.marginRight = '296px';
         }
-    };
+    } else {
+        if (sidebar.classList.contains('close')) {
+            sidebar.classList.remove('close');
+            sidebarLayer.classList.remove('hidden');
+        } else {
+            sidebar.classList.add('close');
+            sidebarLayer.classList.add('hidden');
+        }
+    }
+};
 
     // Event listeners
     toggle.addEventListener('click', toggleSidebar);

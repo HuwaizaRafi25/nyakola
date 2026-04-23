@@ -1,383 +1,129 @@
 {% load static %} {% load svg_tags %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="csrf-token" content="{{ csrf_token }}" />
-    <title>{{ app_name|default:"nyakola" }}</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.10/dist/cdn.min.js"
-    ></script>
-    <link
-      rel="shortcut icon"
-      href="{% static 'images/nyakola_logo.png' %}"
-      type="image/x-icon"
-    />
 
-    <script src="https://cdn.tailwindcss.com"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token }}" />
+  <title>{{ app_name|default:"nyakola" }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.10/dist/cdn.min.js"></script>
+  <link rel="shortcut icon" href="{% static 'images/nyakola_logo.png' %}" type="image/x-icon" />
 
-    <link rel="stylesheet" href="{% static 'css/module.css' %}" />
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    {% if request.resolver_match.url_name == 'user_index' %}
-    <link
-      rel="stylesheet"
-      href="{% static 'node_modules/cropperjs/dist/cropper.min.css' %}"
-    />
-    {% endif %}
-  </head>
+  <link rel="stylesheet" href="{% static 'css/module.css' %}" />
 
-  <body
-    class="font-sans h-full antialiased overflow-y-scroll bg-[#FEFAE0] text-[#283618]"
-  >
-    <nav
-      class="sidebar fixed top-0 right-0 h-[92vh] w-[296px] py-[10px] px-[14px] bg-[#FEFAE0] transition-all duration-300 transform z-30 shadow-lg"
-    >
-      <div
-        id="sidebarLayer"
-        class="absolute right-[296px] top-0 w-screen h-screen bg-[#283618]/10 backdrop-blur-sm hidden lg:hidden transition-opacity duration-300"
-      ></div>
-      <header class="pt-2 pb-3">
-        <div class="image-text">
-          <a href="">
-            <span class="image">
-              <img src="{% static 'images/hah.png' %}" alt="" />
-            </span>
-          </a>
+  {% if request.resolver_match.url_name == 'user_index' %}
+  <link rel="stylesheet" href="{% static 'node_modules/cropperjs/dist/cropper.min.css' %}" />
+  {% endif %}
+</head>
 
-          <div class="text logo-text">
-            <span class="text-[#606C38] font-semibold text-xl">
-              {{ app_name|default:"nyakola" }}
-            </span>
-          </div>
-          <span
-            class="bx bx-menu toggle -mr-10 -mt-1 scale-150 flex justify-center items-center"
-          >
-            <i class="fa-solid fa-bars"></i>
+<body class="font-sans h-full antialiased overflow-y-scroll bg-[#FEFAE0] text-[#283618]">
+  <nav
+    class="sidebar fixed top-[10vh] right-0 h-[82vh] w-[296px] py-[10px] px-[14px] bg-[#FEFAE0] transition-all duration-300 transform z-30 border-l border-[#DDA15E]/40">
+    <div id="sidebarLayer"
+      class="absolute right-[296px] top-0 w-screen h-screen bg-[#283618]/10 backdrop-blur-sm hidden lg:hidden transition-opacity duration-300">
+    </div>
+    <header class="pt-2 pb-3">
+      <span
+        class="bx bx-menu toggle -ml-10 scale-150 flex justify-center items-center bg-[#DDA15E]/30 text-[#283618] rounded-full p-2 cursor-pointer hover:bg-[#DDA15E] transition-colors duration-300">
+        <i class="fa-solid fa-bars"></i>
+      </span>
+      <div class="image-text">
+        <a href="">
+          <span class="image">
+            <img src="{% static 'images/hah.png' %}" alt="" />
+          </span>
+        </a>
+
+        <div class="text logo-text">
+          <span class="text-[#606C38] font-semibold text-xl">
+            {{ app_name|default:"nyakola" }}
           </span>
         </div>
-      </header>
-      <hr />
+      </div>
+    </header>
+    <hr />
 
-      <div class="menu-bar">
-        <div class="menu">
-          <li class="nav-link">
-            <div class="navhead">
+    <div class="menu-bar">
+      {% for sub in module.sub_modul %}
+      <div class="menu">
+        <li class="nav-link">
+          <div class="navhead">
+            <span
+              class="icon bx bx-chevron-down scale-75 opacity-85 icon transition-transform flex justify-center items-center"
+              style="rotate: 180deg">
+              {% inline_svg 'images/icons/chevron.svg' %}
+            </span>
+            <div class="flex justify-between items-center w-full">
+              <span class="text nav-text">{{ sub.judul_sub_modul }}</span>
               <span class="icon flex justify-center items-center">
-                {% inline_svg 'images/icons/dataMaster.svg' %}
               </span>
-              <div class="flex justify-between items-center w-full">
-                <span class="text nav-text">Management</span>
-                <span
-                  class="icon bx bx-chevron-down scale-75 opacity-85 icon transition-transform flex justify-center items-center"
-                  style="margin-left: 40px; rotate: 180deg"
-                >
-                  {% inline_svg 'images/icons/chevron.svg' %}
-                </span>
-              </div>
             </div>
-          </li>
-          <div class="submenu">
-            <ul class="submenu-links flex flex-col gap-y-3 mt-3">
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="1">Users</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="2"
-                  >Classes</span
-                >
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-            </ul>
           </div>
-        </div>
-        <div class="menu">
-          <li class="nav-link">
-            <div class="navhead">
-              <span class="icon flex justify-center items-center">
-                {% inline_svg 'images/icons/dataMaster.svg' %}
+        </li>
+        <div class="submenu">
+          <ul class="submenu-links flex flex-col gap-y-3 mt-3">
+            {% for bab in sub.bab %}
+            <li class="sub-nav-link" onclick="window.location.href='{% url 'showModule' module.id bab.id %}'">
+              <span class="text sub-nav-text" >
+                {{ bab.judul_bab }}
               </span>
-              <div class="flex justify-between items-center w-full">
-                <span class="text nav-text">Management</span>
-                <span
-                  class="icon bx bx-chevron-down scale-75 opacity-85 icon transition-transform flex justify-center items-center"
-                  style="margin-left: 40px; rotate: 180deg"
-                >
-                  {% inline_svg 'images/icons/chevron.svg' %}
-                </span>
-              </div>
-            </div>
-          </li>
-          <div class="submenu">
-            <ul class="submenu-links flex flex-col gap-y-3 mt-3">
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="1">Users</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="2"
-                  >Classes</span
-                >
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-              <li class="sub-nav-link">
-                <span class="text sub-nav-text" data-subNavText="3">Books</span>
-              </li>
-            </ul>
-          </div>
+            </li>
+            {% endfor %}
+          </ul>
         </div>
       </div>
-    </nav>
-
-    <div
-      class="home relative top-0 lg:right-[296px] w-screen left-0 min-h-screen h-screen bg-[#FEFAE0] transition-all transform duration-300"
-    >
-      <header
-        class="bg-[#FEFAE0] w-full sticky top-0 border-b border-[#DDA15E]/40"
-        style="z-index: 29"
-      >
-        <div
-          class="w-full py-4 px-4 sm:px-6 lg:px-8 flex justify-start items-center"
-        >
-          <div class="flex items-center space-x-4 mr-0 md:mr-3">
-            <!-- back button -->
-            <button
-              class="flex items-center justify-center w-10 h-10 rounded-full bg-[#DDA15E]/30 text-[#283618] hover:bg-[#DDA15E] transition-colors duration-300"
-              onclick="window.history.back()"
-            >
-              <i class="fas fa-arrow-left"></i>
-            </button>
-          </div>
-          <h1 class="text-2xl font-bold text-[#283618] pl-4">
-            {{ module.judul_modul }}
-          </h1>
-        </div>
-      </header>
-
-      <main class="p-6">{% block content %}{% endblock %}</main>
+      {% endfor %}
     </div>
-    <div
-      class="fixed flex bottom-4 right-4 cursor-pointer hover:scale-110 transition transform"
-    >
-      <a
-        href="https://wa.me/628815184624"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <i class="fa-brands fa-whatsapp w-20"></i>
-      </a>
-    </div>
+  </nav>
 
-    <footer class="bg-[#FEFAE0] border-t border-[#DDA15E]/40 h-[8vh] py-4 px-6 mt-auto fixed bottom-0 w-screen">
-      <!-- arrow back and forward -->
-      <div class="flex justify-between">
+  <div
+    class="home relative top-0 w-screen left-0 min-h-screen h-screen bg-[#FEFAE0] transition-all transform duration-300">
+
+    <main class="p-6">{% block content %}{% endblock %}</main>
+  </div>
+  <div class="fixed flex bottom-4 right-4 cursor-pointer hover:scale-110 transition transform">
+    <a href="https://wa.me/628815184624" target="_blank" rel="noopener noreferrer">
+      <i class="fa-brands fa-whatsapp w-20"></i>
+    </a>
+  </div>
+  <header class="bg-[#FEFAE0] w-full fixed top-0 border-b border-[#DDA15E]/40 h-[10vh]" style="z-index: 29">
+    <div class="w-full py-4 px-4 sm:px-6 lg:px-8 flex justify-start items-center">
+      <div class="flex items-center space-x-4 mr-0 md:mr-3">
+        <!-- back button -->
         <button
           class="flex items-center justify-center w-10 h-10 rounded-full bg-[#DDA15E]/30 text-[#283618] hover:bg-[#DDA15E] transition-colors duration-300"
-          onclick="window.history.back()"
-        >
+          onclick="window.history.back()">
           <i class="fas fa-arrow-left"></i>
         </button>
-        <button
-          class="flex items-center justify-center w-10 h-10 rounded-full bg-[#DDA15E]/30 text-[#283618] hover:bg-[#DDA15E] transition-colors duration-300"
-          onclick="window.history.forward()"
-        >
-          <i class="fas fa-arrow-right"></i>
-        </button>
       </div>
-    </footer>
+      <h1 class="text-2xl font-bold text-[#283618] pl-4">
+        {{ module.judul_modul }}
+      </h1>
+    </div>
+  </header>
 
-    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="{% static 'js/module.js' %}" defer></script>
-  </body>
+  <footer class="bg-[#FEFAE0] border-t border-[#DDA15E]/40 h-[8vh] py-4 px-6 mt-auto fixed bottom-0 w-screen">
+    <!-- arrow back and forward -->
+    <div class="flex justify-between">
+      <button
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-[#DDA15E]/30 text-[#283618] hover:bg-[#DDA15E] transition-colors duration-300"
+        onclick="window.history.back()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <button
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-[#DDA15E]/30 text-[#283618] hover:bg-[#DDA15E] transition-colors duration-300"
+        onclick="window.history.forward()">
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </footer>
+
+  <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="{% static 'js/module.js' %}" defer></script>
+</body>
+
 </html>
