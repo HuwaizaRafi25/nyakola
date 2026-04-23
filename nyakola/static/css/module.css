@@ -277,15 +277,15 @@ body.dark .sidebar li a:hover .text {
 }
 
 .sidebar .menu-bar {
-    height: 100%;
+    height: 82vh;
     display: flex;
     flex-direction: column;
     /* justify-content: space-between; */
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .menu-bar::-webkit-scrollbar {
-    width: 8px;
+    width: 16px;
 }
 
 .sidebar .menu-bar .mode {

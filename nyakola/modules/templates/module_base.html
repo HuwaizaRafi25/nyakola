@@ -22,7 +22,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/module.css' %}" />
 
     {% if request.resolver_match.url_name == 'user_index' %}
     <link
@@ -36,7 +36,7 @@
     class="font-sans h-full antialiased overflow-y-scroll bg-[#FEFAE0] text-[#283618]"
   >
     <nav
-      class="sidebar fixed top-0 right-0 h-screen w-[296px] py-[10px] px-[14px] bg-[#FEFAE0] transition-all duration-300 transform z-30 shadow-lg"
+      class="sidebar fixed top-0 right-0 h-[92vh] w-[296px] py-[10px] px-[14px] bg-[#FEFAE0] transition-all duration-300 transform z-30 shadow-lg"
     >
       <div
         id="sidebarLayer"
@@ -65,6 +65,132 @@
       <hr />
 
       <div class="menu-bar">
+        <div class="menu">
+          <li class="nav-link">
+            <div class="navhead">
+              <span class="icon flex justify-center items-center">
+                {% inline_svg 'images/icons/dataMaster.svg' %}
+              </span>
+              <div class="flex justify-between items-center w-full">
+                <span class="text nav-text">Management</span>
+                <span
+                  class="icon bx bx-chevron-down scale-75 opacity-85 icon transition-transform flex justify-center items-center"
+                  style="margin-left: 40px; rotate: 180deg"
+                >
+                  {% inline_svg 'images/icons/chevron.svg' %}
+                </span>
+              </div>
+            </div>
+          </li>
+          <div class="submenu">
+            <ul class="submenu-links flex flex-col gap-y-3 mt-3">
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="1">Users</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="2"
+                  >Classes</span
+                >
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+              <li class="sub-nav-link">
+                <span class="text sub-nav-text" data-subNavText="3">Books</span>
+              </li>
+            </ul>
+          </div>
+        </div>
         <div class="menu">
           <li class="nav-link">
             <div class="navhead">
@@ -233,7 +359,7 @@
       </a>
     </div>
 
-    <footer class="bg-[#FEFAE0] border-t border-[#DDA15E]/40 py-4 px-6 mt-auto sticky bottom-0 w-screen">
+    <footer class="bg-[#FEFAE0] border-t border-[#DDA15E]/40 h-[8vh] py-4 px-6 mt-auto fixed bottom-0 w-screen">
       <!-- arrow back and forward -->
       <div class="flex justify-between">
         <button
