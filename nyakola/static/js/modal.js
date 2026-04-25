@@ -78,3 +78,40 @@ function closeModal() {
         modal.classList.add("hidden");
     }
 }
+
+// Gunakan cara ini agar klik selalu terdeteksi, meskipun elemen baru muncul
+document.addEventListener('click', function(event) {
+    // Mengecek apakah yang diklik adalah tombol pensil atau ikon di dalamnya
+    const btn = event.target.closest('.edit-class-btn');
+    
+    if (btn) {
+        const id = btn.getAttribute('data-id');
+        console.log("Tombol diklik, ID: " + id); // Untuk testing di console
+        
+        // Ambil data detail kelas
+        fetch(`/classes/get-class-details/${id}/`)
+            .then(res => res.json())
+            .then(data => {
+                // Masukkan data ke modal
+                document.getElementById('editClassId').value = id;
+                document.getElementById('editNamaKelas').value = data.judul_kelas;
+                document.getElementById('editSiswa').value = data.siswa ? data.siswa.join(', ') : '';
+                document.getElementById('editModul').value = data.modul ? data.modul.map(m => m.judul).join(', ') : '';
+                
+                // Tampilkan modal
+                document.getElementById('editClassModal').classList.remove('hidden');
+            })
+            .catch(err => console.error("Error fetching data:", err));
+    }
+});
+    fetch(`/classes/update/${id}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}' // Django CSRF Token
+        },
+        body: JSON.stringify(data)
+    }).then(response => {
+        if(response.ok) location.reload(); // Refresh setelah sukses
+        else alert("Gagal update data!");
+    });

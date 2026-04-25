@@ -86,11 +86,16 @@
                 >{{ kelas.status }}</span
               >
             </td>
-            <td class="action-cell">
-                <a href="javascript:void(0)" class="view-class-btn" data-id="{{ kelas.id }}">
-                    <i class="fas fa-eye"></i> </a>
-                    <span style="color: #007bff; font-weight: bold; cursor: pointer;">CRUD</span>
-                </td>
+            <td class="p-4 align-top">
+              <div class="flex items-center gap-3">
+                <a href="javascript:void(0)" class="view-class-btn text-gray-500 hover:text-gray-700 transition" data-id="{{ kelas.id }}">
+                  <i class="fas fa-eye"></i>
+                </a>
+                <button type="button" class="edit-class-btn text-blue-600 hover:text-blue-800 transition" data-id="{{ kelas.id }}">
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+              </div>
+            </td>
           </tr>
 
           <tr
@@ -214,5 +219,30 @@
 {% load static %}
 
 <script src="{% static 'js/modal.js' %}"></script>
+
+<div id="editClassModal" class="hidden fixed inset-0 z-50 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+        <h2 class="text-xl font-bold mb-4 text-[#283618]">Edit Kelas</h2>
+        <form id="editClassForm">
+            <input type="hidden" id="editClassId">
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1">Nama Kelas</label>
+                <input type="text" id="editNamaKelas" class="w-full border border-gray-300 p-2 rounded-lg" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1">Siswa (pisahkan dengan koma)</label>
+                <input type="text" id="editSiswa" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="ID1, ID2, ...">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1">Judul Modul (pisahkan dengan koma)</label>
+                <input type="text" id="editModul" class="w-full border border-gray-300 p-2 rounded-lg" placeholder="Modul 1, Modul 2, ...">
+            </div>
+            <div class="flex gap-2 justify-end">
+                <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-lg hover:bg-gray-100">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-[#BC6C25] text-white rounded-lg hover:bg-[#DDA15E]">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 {% endblock %}
