@@ -115,30 +115,41 @@ from bson.errors import InvalidId
 
 def get_class_details(request, class_id):
     try:
+        # Konversi class_id ke ObjectId untuk pencarian
         obj_id = ObjectId(class_id)
+        
+        # Mengambil data kelas
         kelas = classes_collection.find_one({"_id": obj_id})
-
+        
+        # Pengecekan jika kelas tidak ada (dari kode lama)
         if not kelas:
             return JsonResponse({"error": "Kelas tidak ditemukan"}, status=404)
 
-        # FIX DI SINI
-        mentor = kelas.get('id_teacher')
+        # Penanganan tipe data ObjectId agar tidak error saat dikirim ke JSON
+        mentor = kelas.get('mentor')
         if isinstance(mentor, ObjectId):
             mentor = str(mentor)
 
         siswa = kelas.get('daftar_siswa', [])
         siswa = [str(s) if isinstance(s, ObjectId) else s for s in siswa]
 
+        # Ambil daftar modul yang tersambung ke kelas ini
+        # Pastikan pencarian menggunakan obj_id yang sama agar akurat
+        modul_query = list(modules_collection.find({"id_class": str(obj_id)}))
+        
         data = {
             "judul_kelas": kelas.get('nama_kelas', 'Unnamed Class'),
             "nama_mentor": mentor,
-            "siswa": siswa
+            "siswa": siswa,
+            "modul": [
+                {"judul": m.get('judul_modul')} for m in modul_query
+            ]
         }
-
+        
         return JsonResponse(data)
 
     except Exception as e:
-        print("ERROR ASLI:", e)
-        return JsonResponse({"error": "Internal Server Error"}, status=500)
+        # Jika error, kirim pesan error dalam bentuk JSON
+        return JsonResponse({"error": str(e)}, status=500)
     
     
