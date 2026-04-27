@@ -27,6 +27,7 @@ try:
     users_collection = db['users']
     modules_collection = db['modules']
     classes_collection = db['classes']
+    learning_progress = db['learning_progress']
 
     print("✅ Berhasil terhubung ke MongoDB Atlas")
 

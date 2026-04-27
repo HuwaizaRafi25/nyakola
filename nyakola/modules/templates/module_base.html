@@ -50,7 +50,7 @@
     <div class="menu-bar">
       {% for sub in module.sub_modul %}
       <div class="menu">
-        <li class="nav-link">
+        <div class="nav-link cursor-pointer block">
           <div class="navhead">
             <span
               class="icon bx bx-chevron-down scale-75 opacity-85 icon transition-transform flex justify-center items-center"
@@ -59,19 +59,27 @@
             </span>
             <div class="flex justify-between items-center w-full">
               <span class="text nav-text">{{ sub.judul_sub_modul }}</span>
-              <span class="icon flex justify-center items-center">
-              </span>
+              <span class="icon flex justify-center items-center"></span>
             </div>
           </div>
-        </li>
+        </div>
         <div class="submenu">
           <ul class="submenu-links flex flex-col gap-y-3 mt-3">
             {% for bab in sub.bab %}
-            <li class="sub-nav-link" onclick="window.location.href='{% url 'showModule' module.id bab.id %}'">
-              <span class="text sub-nav-text" >
+            <li class="sub-nav-link">
+              <a href="{% url 'showModule' module_id=module.id_module chapter_id=bab.id_bab %}"
+                class="sub-nav-text block w-full relative z-10">
                 {{ bab.judul_bab }}
-              </span>
+              </a>
             </li>
+            {% if bab.quiz_submodul %}
+            <li class="sub-nav-link">
+              <a href="{% url 'quizPrep' module_id=module.id_module quiz_id=bab.quiz_submodul.id_quiz %}"
+                class="sub-nav-text block w-full relative z-10">
+                Ujian bang
+              </a>
+            </li>
+            {% endif %}
             {% endfor %}
           </ul>
         </div>

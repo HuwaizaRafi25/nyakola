@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from bson import ObjectId
 from django.core.paginator import Paginator
-from db_connection import modules_collection # Pastikan ini import-nya benar
+from db_connection import modules_collection, learning_progress
 
 def manage_modul(request):
     # 1. Ambil data langsung dari MongoDB
@@ -38,3 +38,19 @@ def showModule(request, module_id, chapter_id):
         'chapter': target_bab
     }
     return render(request, 'module_page.html', context)
+
+def quizPrep(request, module_id, quiz_id):
+    module_data = modules_collection.find_one({"id_module": module_id})
+
+    if not module_data:
+        return render(request, '404.html', status=404)
+    
+    quiz_history = learning_progress.find_one({"id_user": ObjectId(request.user.id), "id_module": module_id})
+    
+    context = {
+        'quiz_history': quiz_history,
+        'module': module_data,
+        'quiz_id': quiz_id # Dilempar untuk dipakai fetch data ujian nanti
+    }
+
+    return render(request, 'quiz_prep_page.html', context)

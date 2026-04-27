@@ -34,11 +34,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     listSiswa.innerHTML = ""; 
 
                     if (data.siswa && data.siswa.length > 0) {
-                        data.siswa.forEach(nama => {
+                        data.siswa.forEach(s => {
                             const li = document.createElement('li');
                             li.className = "flex items-center gap-3 text-sm text-[#283618] font-medium p-2 bg-white rounded-lg shadow-sm";
-                            li.innerHTML = `<span class="w-2 h-2 bg-[#606C38] rounded-full"></span> ${nama}`;
-                            listSiswa.appendChild(li);
+                            li.innerHTML = ` 
+                                <div class="flex items-center gap-2"> 
+                                    <span class="w-2 h-2 bg-[#606C38] rounded-full"></span> ${s.nama}`;
+                            </div>
+                            <span class="text-[10px] text-gray-400 font-normal">ID: ${s.id.substring(0,5)}...</span>
+                        `;
+                        listSiswa.appendChild(li);
                         });
                     } else {
                         listSiswa.innerHTML = "<li class='text-gray-400 italic text-center py-2'>Belum ada siswa</li>";
@@ -103,6 +108,9 @@ document.addEventListener('click', function(event) {
             })
             .catch(err => console.error("Error fetching data:", err));
     }
+    function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
 });
     fetch(`/classes/update/${id}/`, {
         method: 'POST',
@@ -115,3 +123,4 @@ document.addEventListener('click', function(event) {
         if(response.ok) location.reload(); // Refresh setelah sukses
         else alert("Gagal update data!");
     });
+ 
