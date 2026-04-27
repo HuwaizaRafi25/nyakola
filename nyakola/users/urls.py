@@ -14,6 +14,5 @@ urlpatterns = [# READ: Menampilkan list user
     path('delete/<str:id>/', views.delete_user, name='delete_user'),
 
    # Pastikan nama fungsi di views.py adalah 'check_user_exists' 
-    # sesuai dengan kode yang kamu buat sebelumnya
-    path('check-user-exists/', views.check_user_exists, name='check_user_exists')
+    path('check-user/', views.check_user_exists, name='check_user')
 ]

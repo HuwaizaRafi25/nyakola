@@ -3,7 +3,7 @@ from modules.views import manage_modul
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
-from db_connection import classes_collection, modules_collection
+from db_connection import classes_collection, modules_collection, users_collection
 from django.http import JsonResponse
 
 
@@ -66,11 +66,11 @@ def manage_classes(request):
 def add_class(request):
     if request.method == "POST":
         data = {
-            "class_name": request.POST.get('class_name'),
-            "mentor": request.POST.get('mentor'),
+            "nama_kelas": request.POST.get('class_name'),
+            "id_teacher": request.POST.get('mentor'),
             "status": request.POST.get('status'),
-            "total_students": int(request.POST.get('total_students') or 0),
-            "modules": []
+            "daftar_siswa": int(request.POST.get('total_students') or 0),
+            "daftar_modul": []
         }
 
         classes_collection.insert_one(data)
@@ -95,8 +95,20 @@ def edit_class(request, class_id):
 
 # 🔹 DELETE CLASS
 def delete_class(request, class_id):
-    classes_collection.delete_one({"_id": ObjectId(class_id)})
-    return redirect('manage_class')
+    if request.method == "POST":
+        try:
+            # Hapus dari MongoDB
+            result = classes_collection.delete_one({"_id": ObjectId(class_id)})
+            
+            if result.deleted_count > 0:
+                return JsonResponse({'success': True, 'message': 'Kelas berhasil dihapus'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Kelas tidak ditemukan'}, status=404)
+        
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    
+    return JsonResponse({'success': False, 'message': 'Invalid method'}, status=400)
 
 
 # 🔹 TAMBAH MODULE
@@ -126,30 +138,48 @@ def get_class_details(request, class_id):
             return JsonResponse({"error": "Kelas tidak ditemukan"}, status=404)
 
         # Penanganan tipe data ObjectId agar tidak error saat dikirim ke JSON
-        mentor = kelas.get('mentor')
+        mentor = kelas.get('id_teacher', 'Unknown')
         if isinstance(mentor, ObjectId):
             mentor = str(mentor)
 
-        siswa = kelas.get('daftar_siswa', [])
-        siswa = [str(s) if isinstance(s, ObjectId) else s for s in siswa]
+        # Tambahkan Logika Detail Siswa
+        siswa_ids = kelas.get('daftar_siswa', [])
+        siswa_details = []
 
-        # Ambil daftar modul yang tersambung ke kelas ini
-        # Pastikan pencarian menggunakan obj_id yang sama agar akurat
-        modul_query = list(modules_collection.find({"id_class": str(obj_id)}))
+        for s_id in siswa_ids:
+            # Cari ke users_collection berdasarkan ID
+            # Pastikan s_id dikonversi ke ObjectId jika di database users menggunakan ObjectId
+            try:
+                user_obj_id = ObjectId(s_id) if isinstance(s_id, str) else s_id
+                user_data = users_collection.find_one({"_id": user_obj_id})
+                
+                if user_data:
+                    siswa_details.append({
+                        "id": str(s_id),
+                        "nama": user_data.get('nama_lengkap', user_data.get('username', 'Tanpa Nama'))
+                    })
+                else:
+                    siswa_details.append({"id": str(s_id), "nama": f"ID: {s_id}"})
+            except:
+                siswa_details.append({"id": str(s_id), "nama": f"ID: {s_id}"})
+
+        modul_query = list(modules_collection.find({
+            "$or": [
+                {"id_class": str(obj_id)},
+                {"id_class": obj_id}
+            ]
+        }))
         
         data = {
             "judul_kelas": kelas.get('nama_kelas', 'Unnamed Class'),
             "nama_mentor": mentor,
-            "siswa": siswa,
+            "siswa": siswa_details, # Kirim objek detail, bukan cuma list ID
             "modul": [
-                {"judul": m.get('judul_modul')} for m in modul_query
+                {"judul": m.get('judul_modul', 'Untitled Module')} for m in modul_query
             ]
         }
         
         return JsonResponse(data)
 
     except Exception as e:
-        # Jika error, kirim pesan error dalam bentuk JSON
         return JsonResponse({"error": str(e)}, status=500)
-    
-    

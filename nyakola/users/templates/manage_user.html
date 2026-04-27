@@ -1,5 +1,6 @@
 {% extends 'admin_base.html' %}
 {% block content %}
+{% load static %}
 
 <div x-data="{ 
     openAdd: false, 
@@ -173,7 +174,8 @@
                     <div class="space-y-6">
                         <div>
                             <label class="block text-xs font-bold text-[#2A3A20] uppercase tracking-wider mb-2">Username</label>
-                            <input type="text" x-model="selectedUser" name="username" class="w-full p-4 bg-white border border-gray-200 rounded-2xl text-sm outline-none shadow-sm">
+                            <input type="text" id="username" x-model="selectedUser" name="username" class="w-full p-4 bg-white border border-gray-200 rounded-2xl text-sm outline-none shadow-sm">
+                            <span id="username-error" class="text-sm"></span>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-[#2A3A20] uppercase tracking-wider mb-2">Alamat Email</label>
@@ -182,7 +184,16 @@
                     </div>
                     <div class="mt-12 flex justify-end space-x-4 border-t border-gray-100 pt-6">
                         <button type="button" @click="openEdit = false" class="px-7 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl">Batal</button>
-                        <button type="submit" class="px-8 py-3 bg-[#2A3A20] text-[#FBFBFB] rounded-xl font-bold hover:bg-black/80 shadow-lg tracking-wide text-sm">Simpan</button>
+                        <!-- <button  id="btn-submit" type="submit" class="px-8 py-3 bg-[#2A3A20] text-[#FBFBFB] rounded-xl font-bold hover:bg-black/80 shadow-lg tracking-wide text-sm">Simpan</button> -->
+                        <button  
+    type="submit"
+    :disabled="usernameError !== ''"
+    :class="usernameError !== '' 
+        ? 'opacity-50 cursor-not-allowed bg-gray-400' 
+        : 'bg-[#2A3A20] hover:bg-black'"
+    class="px-8 py-3 text-[#FBFBFB] rounded-xl font-bold shadow-lg tracking-wide text-sm">
+    Simpan
+</button>
                     </div>
                 </form> 
             </div> 
@@ -270,6 +281,88 @@
     });
 
      src="{% static 'js/admin_validation.js' %}"
+
+     //function cek username 
+
+     document.addEventListener('input', function(e) {
+
+    // USERNAME
+    if (e.target.name === 'username') {
+        const username = e.target.value;
+
+        fetch(`${window.location.origin}/users/check-user/?username=${username}`)
+            .then(res => res.json())
+            .then(data => {
+                let errorEl = e.target.parentElement.querySelector('.username-error');
+
+                if (data.is_taken) {
+                    if (!errorEl) {
+                        const p = document.createElement('p');
+                        p.classList.add('text-red-500', 'text-xs', 'username-error');
+                        p.innerText = "Username sudah digunakan!";
+                        e.target.parentElement.appendChild(p);
+                    }
+                } else {
+                    if (errorEl) errorEl.remove();
+                }
+            });
+    }
+
+    // EMAIL
+    if (e.target.name === 'email') {
+        const email = e.target.value;
+
+        fetch(`/check-user/?email=${email}`)
+            .then(res => res.json())
+            .then(data => {
+                let errorEl = e.target.parentElement.querySelector('.email-error');
+
+                if (data.is_taken) {
+                    if (!errorEl) {
+                        const p = document.createElement('p');
+                        p.classList.add('text-red-500', 'text-xs', 'email-error');
+                        p.innerText = "Email sudah digunakan!";
+                        e.target.parentElement.appendChild(p);
+                    }
+                } else {
+                    if (errorEl) errorEl.remove();
+                }
+            });
+    }
+
+});
+
+//blokir tombol simpan jika username sudah ada 
+const errorText = document.getElementById("username-error");
+const submitBtn = document.getElementById("btn-submit");
+
+usernameInput.addEventListener("input", async function () {
+    const username = usernameInput.value;
+
+    if (username.length === 0) {
+        errorText.textContent = "";
+        submitBtn.disabled = false;
+        return;
+    }
+
+    try {
+        const response = await fetch(`/users/check-user/?username=${username}`);
+        const data = await response.json();
+
+        if (data.is_taken) {
+            errorText.textContent = "Username sudah digunakan!";
+            errorText.style.color = "red";
+            submitBtn.disabled = true;
+        } else {
+            errorText.textContent = "Username tersedia";
+            errorText.style.color = "green";
+            submitBtn.disabled = false;
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+});
     
 </script>
 
