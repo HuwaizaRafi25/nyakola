@@ -11,5 +11,8 @@ urlpatterns = [# READ: Menampilkan list user
     path('edit/<str:id>/', views.update_user, name='edit_user'), 
     
     # DELETE: Hapus user berdasarkan ID
-    path('delete/<str:id>/', views.delete_user, name='delete_user')
+    path('delete/<str:id>/', views.delete_user, name='delete_user'),
+
+   # Pastikan nama fungsi di views.py adalah 'check_user_exists' 
+    path('check-user/', views.check_user_exists, name='check_user')
 ]

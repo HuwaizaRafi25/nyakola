@@ -1,45 +1,12 @@
-
-// Sidebar JS
 const navLinks = document.querySelectorAll(".nav-link");
-const subNavLinks = document.querySelectorAll(".sub-nav-text");
-
-const routes = {
-    navLinks: {
-        1: "/dashboard/",
-        2: "/dashboard/settings/",
-        6: "/application-settings",
-        7: "/activity-logs",
-    },
-    subNavLinks: {
-        1: "/users/",
-        2: "/classes/",
-    },
-};
+const subNavLinks = document.querySelectorAll(".sub-nav-link");
 
 navLinks.forEach((navLink) => {
-    navLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        const navLinkId = navLink.getAttribute("data-navLink");
+    navLink.addEventListener("click", () => {
         const submenu = navLink.nextElementSibling;
 
         if (submenu && submenu.classList.contains("submenu")) {
             toggleSubmenu(submenu, navLink.querySelector(".bx-chevron-down"));
-        } else {
-            const route = routes.navLinks[navLinkId];
-            if (route) {
-                navigateToRoute(route);
-            }
-        }
-    });
-});
-
-subNavLinks.forEach((subNavText) => {
-    subNavText.addEventListener("click", (e) => {
-        e.preventDefault();
-        const subNavTextId = subNavText.getAttribute("data-subNavText");
-        const route = routes.subNavLinks[subNavTextId];
-        if (route) {
-            navigateToRoute(route);
         }
     });
 });
@@ -47,81 +14,16 @@ subNavLinks.forEach((subNavText) => {
 function toggleSubmenu(submenu, iconChevron) {
     const isActive = submenu.classList.contains("submenu-active");
     closeAllSubmenus();
+
     if (!isActive) {
         submenu.classList.add("submenu-active");
         submenu.style.maxHeight = submenu.scrollHeight + "px";
-        iconChevron.classList.add("-rotate-90");
+        if (iconChevron) iconChevron.classList.add("-rotate-90");
     }
-}
-
-function navigateToRoute(route) {
-    if (route) {
-        window.location.href = route;
-    } else {
-        console.error("Route not found");
-    }
-}
-
-function setActiveState() {
-    const currentPath = window.location.pathname;
-
-    removeActiveClasses(navLinks);
-    removeSubNavLinkActiveClasses(subNavLinks);
-    closeAllSubmenus();
-
-    for (const [id, route] of Object.entries(routes.navLinks)) {
-        if (currentPath === route) {
-            const navLink = document.querySelector(
-                `.nav-link[data-navLink="${id}"]`
-            );
-            if (navLink) {
-                navLink.classList.add("nav-link-active");
-                const submenu = navLink.nextElementSibling;
-                if (submenu && submenu.classList.contains("submenu")) {
-                    openSubmenu(
-                        submenu,
-                        navLink.querySelector(".bx-chevron-down")
-                    );
-                }
-            }
-            break;
-        }
-    }
-
-    for (const [id, route] of Object.entries(routes.subNavLinks)) {
-        if (currentPath === route) {
-            const subNavText = document.querySelector(
-                `.sub-nav-text[data-subNavText="${id}"]`
-            );
-            if (subNavText) {
-                subNavText.classList.add("sub-nav-text-active");
-                const parentNavLink =
-                    subNavText.closest(".submenu").previousElementSibling;
-                if (parentNavLink) {
-                    parentNavLink.classList.add("nav-link-active");
-                    const submenu = parentNavLink.nextElementSibling;
-                    const iconChevron =
-                        parentNavLink.querySelector(".bx-chevron-down");
-                    if (submenu && iconChevron) {
-                        openSubmenu(submenu, iconChevron);
-                    }
-                }
-            }
-            break;
-        }
-    }
-}
-
-function openSubmenu(submenu, iconChevron) {
-    submenu.classList.add("submenu-active");
-    submenu.style.maxHeight = submenu.scrollHeight + "px";
-    iconChevron.classList.add("-rotate-90");
 }
 
 function closeAllSubmenus() {
-    const allSubmenus = document.querySelectorAll(".submenu-active");
-
-    allSubmenus.forEach((submenu) => {
+    document.querySelectorAll(".submenu-active").forEach((submenu) => {
         submenu.classList.remove("submenu-active");
         submenu.style.maxHeight = null;
 
@@ -133,84 +35,31 @@ function closeAllSubmenus() {
     });
 }
 
-function removeActiveClasses(links) {
-    links.forEach((link) => link.classList.remove("nav-link-active"));
+function setActiveState() {
+    const currentPath = window.location.pathname;
+
+    subNavLinks.forEach((link) => {
+        const a = link.querySelector("a");
+
+        if (a && a.getAttribute("href") === currentPath) {
+            link.classList.add("active");
+
+            const submenu = link.closest(".submenu");
+            if (submenu) {
+                submenu.classList.add("submenu-active");
+                submenu.style.maxHeight = submenu.scrollHeight + "px";
+
+                const parentNav = submenu.previousElementSibling;
+                if (parentNav) {
+                    parentNav.classList.add("nav-link-active");
+                }
+            }
+        }
+    });
 }
 
-function removeSubNavLinkActiveClasses(links) {
-    links.forEach((link) => link.classList.remove("sub-nav-text-active"));
-}
+
 document.addEventListener("DOMContentLoaded", setActiveState);
 
-function navigateTo(url) {
-    document.querySelectorAll('.sub-nav-link').forEach(link => {
-        link.classList.remove('active');
-    });
-    event.currentTarget.classList.add('active');
-    window.location.href = url;
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.querySelector('.sidebar');
-    const sidebarLayer = document.getElementById('sidebarLayer');
-    const toggle = document.querySelector('.toggle');
-    const home = document.querySelector('.home');
-
-    const updateSidebarState = () => {
-        if (window.innerWidth >= 1024) {
-            // Untuk layar lg ke atas - sidebar defaultnya terbuka
-            sidebar.classList.remove('close');
-            sidebar.classList.remove('-translate-x-full');
-            sidebarLayer.classList.add('hidden');
-            home.classList.add('lg:right-[296px]');
-            home.style.width = 'calc(100% - 296px)';
-        } else {
-            // Untuk layar di bawah lg - sidebar defaultnya tertutup
-            sidebar.classList.add('close');
-            sidebar.classList.add('-translate-x-full');
-            sidebarLayer.classList.add('hidden');
-            home.classList.remove('lg:right-[296px]');
-            home.style.width = '100%';
-        }
-    };
-
-    const toggleSidebar = () => {
-        if (window.innerWidth >= 1024) {
-            // Toggle untuk layar lg ke atas
-            if (!sidebar.classList.contains('close')) {
-                // Jika sidebar terbuka, tutup sidebar
-                sidebar.classList.add('close');
-                sidebar.classList.add('-translate-x-full');
-                home.style.width = '100%';
-                home.classList.remove('lg:right-[296px]');
-            } else {
-                // Jika sidebar tertutup, buka sidebar
-                sidebar.classList.remove('close');
-                sidebar.classList.remove('-translate-x-full');
-                home.style.width = 'calc(100% - 296px)';
-                home.classList.add('lg:right-[296px]');
-            }
-        } else {
-            // Toggle untuk layar di bawah lg
-            if (sidebar.classList.contains('close')) {
-                // Jika sidebar tertutup, buka sidebar (overlay)
-                sidebar.classList.remove('close');
-                sidebar.classList.remove('-translate-x-full');
-                sidebarLayer.classList.remove('hidden');
-            } else {
-                // Jika sidebar terbuka, tutup sidebar
-                sidebar.classList.add('close');
-                sidebar.classList.add('-translate-x-full');
-                sidebarLayer.classList.add('hidden');
-            }
-        }
-    };
-
-    // Event listeners
-    toggle.addEventListener('click', toggleSidebar);
-    sidebarLayer.addEventListener('click', toggleSidebar);
-    window.addEventListener('resize', updateSidebarState);
-
-    // Inisialisasi
-    updateSidebarState();
-});
+console.log("Module loaded successfully.");

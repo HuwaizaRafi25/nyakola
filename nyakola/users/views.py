@@ -93,3 +93,25 @@ def manage_users(request):
     return render(request, 'manage_user.html', {'semua_user': users})
 
 
+def check_user_exists(request):
+    username = request.GET.get('username', None)
+    email = request.GET.get('email', None)
+    data = {
+        'is_taken': False
+    }
+
+    if username:
+        # Cek ke MongoDB menggunakan users_collection (Case-Insensitive)
+        existing_user = users_collection.find_one({
+            "username": re.compile('^' + re.escape(username) + '$', re.IGNORECASE)
+        })
+        data['is_taken'] = True if existing_user else False
+        
+    elif email:
+        # Cek ke MongoDB untuk email (Case-Insensitive)
+        existing_user = users_collection.find_one({
+            "email": re.compile('^' + re.escape(email) + '$', re.IGNORECASE)
+        })
+        data['is_taken'] = True if existing_user else False
+        
+    return JsonResponse(data)

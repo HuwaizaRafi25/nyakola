@@ -23,7 +23,7 @@
 
 body {
     min-height: 100vh;
-    height: auto;
+    height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
     transition: var(--tran-05);
@@ -41,6 +41,17 @@ body.dark {
     --primary-color-light: #BC6C25;
     --toggle-color: #FEFAE0;
     --text-color: #FEFAE0;
+}
+
+.sidebar {
+    right: 0;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+}
+
+/* Saat close → geser ke kanan (keluar layar) */
+.sidebar.close {
+    transform: translateX(100%);
 }
 
 /* ===== Reusable code - Here ===== */
@@ -141,8 +152,8 @@ header .image-text .profession {
 
 .sidebar header .toggle {
     position: absolute;
-    top: 50%;
-    right: -25px;
+    top: 8vh;
+    left: -25px;
     transform: translateY(-50%) rotate(180deg);
     height: 25px;
     width: 25px;
@@ -197,8 +208,7 @@ body.dark .sidebar header .toggle {
     width: 100%;
     text-decoration: none;
     transition: var(--tran-03);
-
-}
+    z-index: 10;}
 
 .sidebar .sub-nav-text:hover {
     color: var(--primary-color);
@@ -212,6 +222,7 @@ body.dark .sidebar header .toggle {
     margin: 0;
     border-radius: 6px;
     transition: max-height 0.4s ease, padding 0.4s ease; /* Transisi smooth untuk height dan padding */
+    z-index: 10;
 }
 
 /* .sidebar .submenu-active {
@@ -277,15 +288,15 @@ body.dark .sidebar li a:hover .text {
 }
 
 .sidebar .menu-bar {
-    height: 100%;
+    height: 82vh;
     display: flex;
     flex-direction: column;
     /* justify-content: space-between; */
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .menu-bar::-webkit-scrollbar {
-    display: none;
+    width: 16px;
 }
 
 .sidebar .menu-bar .mode {
