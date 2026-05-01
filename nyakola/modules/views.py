@@ -1,23 +1,81 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from db_connection import modules_collection
+from django.http import JsonResponse
 from bson import ObjectId
 from django.core.paginator import Paginator
 from db_connection import modules_collection, learning_progress
 from django.utils.dateparse import parse_datetime
+from .models import Module
 
-def manage_modul(request):
-    # 1. Ambil data langsung dari MongoDB
-    # .find() mengembalikan cursor, ubah jadi list
-    data_list = list(modules_collection.find({})) 
+
+def save_module_content(request, module_id):
+    if request.method == 'POST':
+        id_bab = request.POST.get('id_bab')
+        judul_bab = request.POST.get('judul_bab')
+        konten = request.POST.get('konten')
+
+        # Pastikan tidak ada referensi ke class 'Bab' yang tidak terdefinisi
+        result = modules_collection.update_one(
+            {
+                "id_module": module_id, 
+                "sub_modul.bab.id_bab": id_bab
+            },
+            {
+                "$set": {
+                    "sub_modul.$[sub].bab.$[b].judul_bab": judul_bab,
+                    "sub_modul.$[sub].bab.$[b].konten": konten
+                }
+            },
+            array_filters=[
+                {"sub.bab.id_bab": id_bab},
+                {"b.id_bab": id_bab}
+            ]
+        )
+
+        if result.modified_count > 0:
+            print(f"Berhasil update bab {id_bab} di module {module_id}")
+        else:
+            print("Peringatan: Tidak ada data yang diubah atau ID tidak cocok.")
+
+        return redirect('module_editor', module_id=module_id)
+
+
+def manage_modules(request):
+    # --- 1. PINTU UNTUK PROSES SIMPAN (CREATE) ---
+    # Logika ini hanya jalan kalau kamu klik tombol "Simpan Modul" di modal
+    if request.method == "POST":
+        title = request.POST.get('title')
+        author = request.POST.get('author')
+        category = request.POST.get('category')
+        
+        # Simpan ke MongoDB Atlas
+        modules_collection.insert_one({
+            "judul_modul": title,
+            "author": author,
+            "category": category,
+            "sub_modul": [] # Wajib ada agar saat dibuka detailnya tidak error
+        })
+        # Setelah simpan, segarkan halaman agar data baru muncul di tabel
+        return redirect('manage_modules')
+
+    # --- 2. LOGIKA TAMPIL DATA (READ) ---
+    # Bagian ini tetap dipertahankan supaya tabel tidak kosong
+    query = request.GET.get('q', '')
+    if query:
+        data_list = list(modules_collection.find({"judul_modul": {"$regex": query, "$options": "i"}}))
+    else:
+        data_list = list(modules_collection.find({})) 
     
-    # 2. Paginator-nya Django bisa dipakai untuk List (bukan cuma QuerySet!)
-    paginator = Paginator(data_list, 5) # 5 item per halaman
+    # Paginator (Biar datanya rapi 5 baris per halaman)
+    paginator = Paginator(data_list, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     context = {
         'page_obj': page_obj,
-        'query': request.GET.get('q', '')
+        'query': query
     }
+    # Kembalikan ke template manajemen modul
     return render(request, 'manage_module.html', context)
 
 def showModule(request, module_id, chapter_id):
@@ -69,24 +127,17 @@ def quizPrep(request, module_id, quiz_id):
         "id_modul": module_id
     })
 
-    quiz_attempts = []
-    if learning_doc:
-        if quiz_id == "final" or quiz_id == "QF-SD":
-            quiz_akhir = learning_doc.get('progres_quiz_akhir', {})
-            quiz_attempts = quiz_akhir.get('attempts', [])
-        else:
-            for progress_sub in learning_doc.get('progres_quiz_sub_modul', []):
-                if progress_sub.get('id_quiz') == quiz_id:
-                    quiz_attempts = progress_sub.get('attempts', [])
-                    break
-                
-        for a in quiz_attempts: a['date'] = parse_datetime(a['date'])
-        
+def module_editor(request, module_id):
+    # 1. Ambil data modul dari MongoDB berdasarkan module_id
+    module_data = modules_collection.find_one({"id_module": module_id})
+    
+    if not module_data:
+        return render(request, '404.html', status=404)
+
     context = {
         'module': module_data,
-        'quiz': selected_quiz, 
-        'attempts': sorted(quiz_attempts, key=lambda x: x['attempt_no'], reverse=True),
-        'quiz_id': quiz_id,
+        'module_id': module_id,
     }
     
-    return render(request, 'quiz_prep_page.html', context) 
+    # 2. Arahkan ke template khusus editor
+    return render(request, 'module_editor.html', context) 

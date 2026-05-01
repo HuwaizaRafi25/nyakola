@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from modules.views import manage_modul 
+from modules.views import manage_modules 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
@@ -126,6 +126,7 @@ def add_module(request, class_id):
 from bson.errors import InvalidId
 
 def get_class_details(request, class_id):
+    print(f"DEBUG: Menerima ID: {class_id}") # Cek di terminal Django
     try:
         # Konversi class_id ke ObjectId untuk pencarian
         obj_id = ObjectId(class_id)
