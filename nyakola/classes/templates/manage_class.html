@@ -88,6 +88,39 @@
               >
             </td>
             <td class="p-4 align-top">
+              <div id="editClassModal" class="hidden fixed inset-0 z-50 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+                <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+                  <h2 class="text-xl font-bold mb-4 text-[#283618]">Edit Kelas</h2>
+                  <form id="editClassForm">
+      {% csrf_token %} <!-- 1. WAJIB TAMBAHKAN INI -->
+      
+      <input type="hidden" id="editClassId" />
+      
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1">Nama Kelas</label>
+        <input type="text" id="editNamaKelas" class="w-full border border-gray-300 p-2 rounded-lg" required />
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1">Siswa (pisahkan dengan koma)</label>
+        <!-- 2. GANTI MENJADI TEXTAREA -->
+        <textarea id="editSiswa" class="w-full border border-gray-300 p-2 rounded-lg" rows="3" placeholder="ID1, ID2, ..."></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1">Judul Modul (pisahkan dengan koma)</label>
+        <!-- 3. GANTI MENJADI TEXTAREA -->
+        <textarea id="editModul" class="w-full border border-gray-300 p-2 rounded-lg" rows="3" placeholder="Modul 1, Modul 2, ..."></textarea>
+      </div>
+
+      <div class="flex gap-2 justify-end">
+        <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-lg hover:bg-gray-100">Batal</button>
+        <button type="submit" class="px-4 py-2 bg-[#BC6C25] text-white rounded-lg hover:bg-[#DDA15E]">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
               <div class="flex items-center gap-3">
                 <a
                   href="javascript:void(0)"
@@ -95,7 +128,7 @@
                   data-id="{{ kelas.id }}"
                 >
                   <i class="fas fa-eye"></i>
-                </a>
+                </a> 
                 <button
                   type="button"
                   class="text-blue-600 hover:text-blue-800 transition"
@@ -200,6 +233,37 @@
                     {% endfor %}
                   </tbody>
                 </table>
+                <div class="mt-6">
+                    <h4 class="text-[11px] font-bold text-[#606C38] mb-3 uppercase tracking-wider flex items-center">
+                        <span class="mr-2">👥</span> Daftar Siswa Terdaftar
+                    </h4>
+                    <div class="overflow-hidden rounded-lg border border-gray-200">
+                        <table class="w-full text-left text-xs bg-white">
+                            <thead class="bg-gray-50 text-gray-500 border-b border-gray-200">
+                                <tr>
+                                    <th class="p-3 font-semibold">No</th>
+                                    <th class="p-3 font-semibold">Nama Lengkap</th>
+                                    <th class="p-3 font-semibold text-center">NIM</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {% for student in kelas.student_list %}
+                                <tr class="hover:bg-blue-50/50 transition-colors">
+                                    <td class="p-3 text-gray-400 w-10 text-center">{{ forloop.counter }}</td>
+                                    <td class="p-3 font-medium text-[#283618]">{{ student.nama }}</td>
+                                    <td class="p-3 text-center text-gray-500">{{ student.nim }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="p-4 text-center text-gray-400 italic">
+                                        Belum ada siswa di kelas ini.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
               </div>
             </td>
           </tr>
@@ -234,121 +298,9 @@
   }
 </script>
 
-<script>
-  // Fungsi ini akan mengambil data dari server, baru membuka modal
-  async function fetchAndOpenModal(id) {
-    try {
-      const response = await fetch(`/get-class-details/${id}/`); // Sesuaikan URL dengan path di urls.py kamu
-      const data = await response.json();
-
-      if (data.error) {
-        alert("Gagal mengambil data: " + data.error);
-        return;
-      }
-
-      // 1. Isi input modal dengan data dari server
-      document.getElementById("editClassId").value = id;
-      document.getElementById("editNamaKelas").value = data.judul_kelas;
-
-      // Mengubah array siswa menjadi string koma
-      const siswaString = data.siswa.map((s) => s.nama).join(", ");
-      document.getElementById("editSiswa").value = siswaString;
-
-      // Mengubah array modul menjadi string koma
-      const modulString = data.modul.map((m) => m.judul).join(", ");
-      document.getElementById("editModul").value = modulString;
-
-      // 2. Tampilkan modal
-      document.getElementById("editClassModal").classList.remove("hidden");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Terjadi kesalahan saat memuat data.");
-    }
-  }
-
-  // Fungsi untuk menutup modal
-  function closeEditModal() {
-    document.getElementById("editClassModal").classList.add("hidden");
-  }
-</script>
-
-<script>
-  document.querySelectorAll(".view-class-btn").forEach((btn) => {
-    btn.addEventListener("click", function () {
-      const classId = this.getAttribute("data-id");
-      fetch(`/classes/get-class-details/${classId}/`)
-        .then((response) => response.json())
-        .then((data) => {
-          // Isi inputnya langsung di sini
-          document.getElementById("input_nama_kelas").value = data.judul_kelas;
-          // ... dan seterusnya
-          document.getElementById("classModal").style.display = "block";
-        });
-    });
-  });
-</script>
-
 {% load static %}
 
 <script src="{% static 'js/modal.js' %}"></script>
-
-<div
-  id="editClassModal"
-  class="hidden fixed inset-0 z-50 bg-gray-600 bg-opacity-50 flex items-center justify-center"
->
-  <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-    <h2 class="text-xl font-bold mb-4 text-[#283618]">Edit Kelas</h2>
-    <form id="editClassForm">
-      <input type="hidden" id="editClassId" />
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1">Nama Kelas</label>
-        <input
-          type="text"
-          id="editNamaKelas"
-          class="w-full border border-gray-300 p-2 rounded-lg"
-          required
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"
-          >Siswa (pisahkan dengan koma)</label
-        >
-        <input
-          type="text"
-          id="editSiswa"
-          class="w-full border border-gray-300 p-2 rounded-lg"
-          placeholder="ID1, ID2, ..."
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"
-          >Judul Modul (pisahkan dengan koma)</label
-        >
-        <input
-          type="text"
-          id="editModul"
-          class="w-full border border-gray-300 p-2 rounded-lg"
-          placeholder="Modul 1, Modul 2, ..."
-        />
-      </div>
-      <div class="flex gap-2 justify-end">
-        <button
-          type="button"
-          onclick="closeEditModal()"
-          class="px-4 py-2 border rounded-lg hover:bg-gray-100"
-        >
-          Batal
-        </button>
-        <button
-          type="submit"
-          class="px-4 py-2 bg-[#BC6C25] text-white rounded-lg hover:bg-[#DDA15E]"
-        >
-          Simpan
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 
 <script>
   function confirmDelete(classId, className) {
