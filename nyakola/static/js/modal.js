@@ -32,10 +32,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function openViewModal(id) {
     try {
-        const response = await fetch(`/get-class-details/${id}/`);
+        const response = await fetch(`/classes/get-class-details/${id}/`); 
         const data = await response.json();
-        // ... (Tambahkan logika render modal view kamu di sini)
-        document.getElementById("classModal").classList.remove("hidden");
+        
+        // Logika render modal view (sesuaikan ID dengan HTML modal detail kamu)
+        const modal = document.getElementById("classModal");
+        if (modal) {
+            // Contoh pengisian data sederhana
+            // document.getElementById('viewNamaKelas').innerText = data.judul_kelas;
+            modal.classList.remove("hidden");
+        }
     } catch (err) {
         console.error("Error:", err);
     }
@@ -43,45 +49,82 @@ async function openViewModal(id) {
 
 async function openEditModal(id) {
     try {
-        const response = await fetch(`/get-class-details/${id}/`);
-        if (!response.ok) throw new Error('Gagal');
+        // Tambahkan /classes/ sesuai path Django kamu
+        const response = await fetch(`/classes/get-class-details/${id}/`); 
+        
+        if (!response.ok) throw new Error('Gagal mengambil data');
         const data = await response.json();
         
-        document.getElementById('editClassId').value = id;
-        document.getElementById('editNamaKelas').value = data.judul_kelas;
-        document.getElementById('editSiswa').value = data.siswa ? data.siswa.map(s => s.nama).join(', ') : '';
-        document.getElementById('editModul').value = data.modul ? data.modul.map(m => m.judul).join(', ') : '';
+        // Ambil elemen input/textarea
+        const idInput = document.getElementById('editClassId');
+        const namaInput = document.getElementById('editNamaKelas');
+        const siswaTextarea = document.getElementById('editSiswa');
+        const modulTextarea = document.getElementById('editModul');
         
-        document.getElementById('editClassModal').classList.remove('hidden');
+        if (idInput && namaInput) {
+            idInput.value = id;
+            namaInput.value = data.judul_kelas || '';
+            
+            // Update: Penanganan data Siswa (Map jika array, tampilkan string jika sudah string)
+            if (siswaTextarea) {
+                siswaTextarea.value = Array.isArray(data.siswa) 
+                    ? data.siswa.map(s => s.nama || s).join(', ') 
+                    : (data.siswa || '');
+            }
+
+            // Update: Penanganan data Modul
+            if (modulTextarea) {
+                modulTextarea.value = Array.isArray(data.modul) 
+                    ? data.modul.map(m => m.judul || m).join(', ') 
+                    : (data.modul || '');
+            }
+            
+            document.getElementById('editClassModal').classList.remove('hidden');
+        } else {
+            console.error("Elemen input modal tidak lengkap di HTML!");
+        }
+        
     } catch (err) {
-        alert("Terjadi kesalahan.");
+        console.error("Detail Error:", err);
+        alert("Terjadi kesalahan saat memuat data.");
     }
 }
 
 async function submitUpdateForm() {
     const id = document.getElementById('editClassId').value;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
     const data = {
         judul_kelas: document.getElementById('editNamaKelas').value,
-        // ... sesuaikan dengan field yang ingin di-update
+        siswa: document.getElementById('editSiswa').value,
+        modul: document.getElementById('editModul').value
     };
 
     try {
-        const response = await fetch(`/get-class-details/${id}/update/`, { // Sesuaikan URL update-mu
+        // Sesuaikan URL update dengan urls.py kamu
+        const response = await fetch(`/classes/get-class-details/${id}/update/`, { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value // Pastikan ada CSRF token di form
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify(data)
         });
-        if(response.ok) location.reload();
-        else alert("Gagal update data!");
+
+        if (response.ok) {
+            alert("Data berhasil diperbarui!");
+            location.reload();
+        } else {
+            const errorRes = await response.json();
+            alert("Gagal update: " + (errorRes.message || "Terjadi kesalahan"));
+        }
     } catch (err) {
-        console.error(err);
+        console.error("Error saat update:", err);
+        alert("Terjadi kesalahan koneksi.");
     }
 }
 
-// Fungsi global agar bisa dipanggil dari tombol di HTML
+// Fungsi global untuk tutup modal
 function closeEditModal() {
     document.getElementById('editClassModal').classList.add('hidden');
 }
