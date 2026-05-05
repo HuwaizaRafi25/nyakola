@@ -1,136 +1,564 @@
-{% extends 'admin_base.html' %}
-{% block content %}
+{% extends 'admin_base.html' %} {% block content %}
 
-<div x-data="{ 
+<style>
+  [x-cloak] {
+    display: none !important;
+  }
+</style>
+
+<div
+  x-data="{ 
     openAdd: false, 
     openEdit: false, 
     openDelete: false, 
     openDetail: false,
     selectedBook: { id: '', title: '', author: '', cover: '' } 
-}" class="p-4 md:p-10 space-y-8 bg-[#FBF8F1] min-h-screen">
+}"
+  class="p-4 md:p-10 space-y-8 bg-[#FBF8F1] min-h-screen"
+>
+  <div
+    class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-200 pb-8 space-y-4 md:space-y-0"
+  >
+    <div>
+      <h1 class="text-3xl font-extrabold text-[#2A3A20] tracking-tight">
+        Manajemen Modul
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">Kelola koleksi materi Nyakola.</p>
+    </div>
 
-    <div class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-200 pb-8 space-y-4 md:space-y-0">
-        <div>
-            <h1 class="text-3xl font-extrabold text-[#2A3A20] tracking-tight">Manajemen Modul</h1>
-            <p class="text-sm text-gray-500 mt-1">Kelola koleksi materi Nyakola.</p>
+    <div class="flex items-center space-x-4 w-full md:w-auto">
+      <form method="GET" class="relative w-full md:w-72">
+        <input
+          type="text"
+          name="q"
+          placeholder="Cari buku..."
+          value="{{ query }}"
+          class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-[#2A3A20]/20 outline-none shadow-sm"
+        />
+        <div
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <svg
+            class="h-4 w-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            ></path>
+          </svg>
         </div>
+      </form>
 
-        <div class="flex items-center space-x-4 w-full md:w-auto">
-            <form method="GET" class="relative w-full md:w-72">
-                <input type="text" name="q" placeholder="Cari buku..." value="{{ query }}"
-                       class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-[#2A3A20]/20 outline-none shadow-sm">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      <button
+        @click="openAdd = true"
+        class="px-6 py-2.5 bg-[#2A3A20] text-white rounded-2xl text-sm font-bold hover:bg-black transition shadow-lg flex items-center shrink-0"
+      >
+        <span>Tambah Modul</span>
+        <svg
+          class="ml-2 w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          ></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden"
+  >
+    <div class="overflow-x-auto">
+      <table class="min-w-full">
+        <thead>
+          <tr class="bg-gray-50/50 border-b border-gray-100 text-left">
+            <th
+              class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest"
+            >
+              No
+            </th>
+            <th
+              class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest"
+            >
+              Modul/Buku
+            </th>
+            <th
+              class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-center"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          {% for book in page_obj %}
+          <tr class="hover:bg-gray-50/80 transition duration-150">
+            <td class="px-6 py-5 text-sm font-medium text-gray-600">
+              {{ forloop.counter0|add:page_obj.start_index }}
+            </td>
+            <td class="px-6 py-5">
+              <div class="flex items-center space-x-4">
+                <img
+                  src="{{ book.cover.url }}"
+                  class="w-12 h-16 object-cover rounded-lg shadow-sm"
+                  alt="Cover"
+                />
+                <div>
+                  <p class="text-sm font-bold text-gray-900">
+                    {{ book.title }}
+                  </p>
+                  <p class="text-[11px] text-gray-400 font-medium">
+                    {{ book.author }}
+                  </p>
                 </div>
-            </form>
+              </div>
+            </td>
+            <td class="px-6 py-5">
+              <div class="flex justify-center space-x-1">
+
+                <button
+                  @click="
+    openDetail = true; 
+    selectedBook = { 
+      id: '{{ book.id_module }}', 
+      title: '{{ book.judul_modul|escapejs }}', 
+      author: '{{ book.id_teacher|escapejs }}',
+      cover: '{{ book.cover.url }}',
+      url: '/modules/{{ book.id_module }}/chapter/{{ book.sub_modul.0.bab.0.id_bab }}/' 
+    }"
+                  class="p-2 text-blue-400 hover:bg-blue-50 rounded-xl transition"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                </button>
+
+                <button
+  @click="
+    selectedBook = { 
+        id: '{{ book.id_module }}', 
+        title: '{{ book.judul_modul|escapejs }}', 
+        author: '{{ book.id_teacher|escapejs }}',
+        edit_url: '/modules/{{ book.id_module }}/editor/' 
+    }; 
+    openEdit = true;"
+  class="p-2 text-amber-400 hover:bg-amber-50 rounded-xl transition"
+>
+  <!-- SVG Ikon Pensil tetap sama -->
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+  </svg>
+</button>
+
+                <button
+                  @click="openDelete = true; selectedBook = { 
+            id: '{{ book.id }}', 
+            title: '{{ book.judul_modul|escapejs }}' 
+        }"
+                  class="p-2 text-red-400 hover:bg-red-50 rounded-xl transition"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  //modal untuk mengedit modul
+ <div x-show="openEdit" class="fixed inset-0 z-[160] flex items-center justify-center p-4" x-cloak>
+    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="openEdit = false"></div>
+    
+    <div class="relative bg-white rounded-[40px] shadow-2xl max-w-lg w-full p-10 border border-gray-100 text-center">
+        <div class="w-20 h-20 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-pen-nib text-3xl"></i>
+        </div>
+        
+        <h3 class="text-2xl font-extrabold text-[#2A3A20] mb-2">Edit Konten Modul</h3>
+        <p class="text-gray-400 mb-8" x-text="'Anda akan mengedit materi untuk: ' + selectedBook.title"></p>
+
+        <div class="flex flex-col gap-3">
+            <a :href="selectedBook.edit_url" class="w-full py-4 bg-[#2A3A20] text-white font-bold rounded-2xl hover:bg-black transition">
+                Masuk ke Editor Materi
+            </a>
             
-            <button @click="openAdd = true" class="px-6 py-2.5 bg-[#2A3A20] text-white rounded-2xl text-sm font-bold hover:bg-black transition shadow-lg flex items-center shrink-0">
-                <span>Tambah Modul</span>
-                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <button @click="openEdit = false" class="w-full py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition">
+                Batal
             </button>
         </div>
     </div>
+</div>
 
-    <div class="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full">
-                <thead>
-                    <tr class="bg-gray-50/50 border-b border-gray-100 text-left">
-                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">No</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Modul/Buku</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50">
-                    {% for book in page_obj %}
-                    <tr class="hover:bg-gray-50/80 transition duration-150">
-                        <td class="px-6 py-5 text-sm font-medium text-gray-600">{{ forloop.counter0|add:page_obj.start_index }}</td>
-                        <td class="px-6 py-5">
-                            <div class="flex items-center space-x-4">
-                                <img src="{{ book.cover.url }}" class="w-12 h-16 object-cover rounded-lg shadow-sm" alt="Cover">
-                                <div>
-                                    <p class="text-sm font-bold text-gray-900">{{ book.title }}</p>
-                                    <p class="text-[11px] text-gray-400 font-medium">{{ book.author }}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-5">
-                            <div class="flex justify-center space-x-1">
-                                <button @click="openDetail = true; selectedBook = {title: '{{book.title}}', author: '{{book.author}}'}" class="p-2 text-blue-400 hover:bg-blue-50 rounded-xl transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
-                                <button @click="openEdit = true" class="p-2 text-amber-400 hover:bg-amber-50 rounded-xl transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
-                                <button @click="openDelete = true" class="p-2 text-red-400 hover:bg-red-50 rounded-xl transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+  //modal untuk menghapus modul
+  <div
+    x-show="openDelete"
+    class="fixed inset-0 z-[160] flex items-center justify-center p-4"
+    x-cloak
+  >
+    <div
+      class="fixed inset-0 bg-[#2A3A20]/40 backdrop-blur-sm"
+      @click="openDelete = false"
+    ></div>
+    <div
+      class="relative bg-white rounded-[32px] shadow-2xl max-w-sm w-full p-8 text-center border border-gray-100"
+    >
+      <div
+        class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"
+      >
+        ⚠️
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Hapus Modul?</h3>
+      <p class="text-sm text-gray-500 mb-8">
+        Kamu akan menghapus
+        <span class="font-bold text-gray-800" x-text="selectedBook.title"></span
+        >. Tindakan ini tidak bisa dibatalkan.
+      </p>
+      <div class="flex flex-col space-y-3">
+        <a
+          :href="'/delete-book/' + selectedBook.id"
+          class="px-6 py-3 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700"
+          >Ya, Hapus Sekarang</a
+        >
+        <button
+          @click="openDelete = false"
+          class="px-6 py-3 text-gray-500 font-bold rounded-2xl hover:bg-gray-100"
+        >
+          Batal
+        </button>
+      </div>
     </div>
+  </div>
 
-    <div class="mt-8 flex justify-center">
-        <nav class="flex items-center space-x-2">
-            {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition">←</a>
-            {% endif %}
-            
-            <div class="flex bg-white rounded-2xl shadow-sm border border-gray-100 p-1">
-                {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                        <span class="w-10 h-10 flex items-center justify-center bg-[#2A3A20] text-white rounded-xl font-bold text-sm">{{ num }}</span>
-                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#2A3A20] font-medium text-sm">{{ num }}</a>
-                    {% endif %}
-                {% endfor %}
+  //modal untuk melihat data modul
+  <div
+    x-show="openDetail"
+    class="fixed inset-0 z-[160] flex items-center justify-center p-4"
+    x-cloak
+  >
+    <div
+      class="fixed inset-0 bg-[#2A3A20]/40 backdrop-blur-sm"
+      @click="openDetail = false"
+    ></div>
+
+    <div
+      class="relative bg-white rounded-[40px] shadow-2xl max-w-2xl w-full overflow-hidden border border-gray-100"
+    >
+      <div class="p-8 md:p-10">
+        <div class="flex justify-between items-start mb-8">
+          <div>
+            <h3 class="text-2xl font-extrabold text-[#2A3A20]">
+              Informasi Modul
+            </h3>
+            <p class="text-sm text-gray-400 mt-1">
+              Pratinjau detail data materi yang tersimpan.
+            </p>
+          </div>
+          <button
+            @click="openDetail = false"
+            class="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition"
+          >
+            <svg
+              class="w-6 h-6 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-10">
+          <div class="w-full md:w-1/3 flex-shrink-0">
+            <div
+              class="aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-gray-50"
+            >
+              <img
+                :src="selectedBook.cover"
+                class="w-full h-full object-cover"
+                alt="Cover Modul"
+              />
+            </div>
+          </div>
+
+          <div class="w-full md:w-2/3 space-y-6">
+            <div>
+              <label
+                class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1"
+                >Judul Modul</label
+              >
+              <p
+                class="text-lg font-bold text-[#2A3A20] leading-tight"
+                x-text="selectedBook.title"
+              ></p>
             </div>
 
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition">→</a>
-            {% endif %}
-        </nav>
-    </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1"
+                  >Penulis</label
+                >
+                <p
+                  class="text-sm font-semibold text-gray-700"
+                  x-text="selectedBook.author"
+                ></p>
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1"
+                  >Kategori</label
+                >
+                <span
+                  class="inline-block px-3 py-1 bg-green-50 text-[#2A3A20] text-xs font-bold rounded-lg border border-green-100"
+                  x-text="selectedBook.category"
+                ></span>
+              </div>
+            </div>
 
-    <div x-show="openAdd" class="fixed inset-0 z-[160] flex items-center justify-center p-4" x-cloak>
-        <div class="fixed inset-0 bg-[#2A3A20]/40 backdrop-blur-sm" @click="openAdd = false"></div>
-        <div class="relative bg-white rounded-[40px] shadow-2xl max-w-2xl w-full p-10 overflow-hidden border border-gray-100">
-            <h3 class="text-2xl font-extrabold text-[#2A3A20] mb-8">Tambah Modul Baru</h3>
-            
-            <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                {% csrf_token %}
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Judul Buku</label>
-                        <input type="text" name="title" required class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-[#2A3A20] outline-none transition-all">
-                    </div>
-                    <div class="col-span-1">
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Penulis (Author)</label>
-                        <input type="text" name="author" required class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-[#2A3A20] outline-none">
-                    </div>
-                    <div class="col-span-1">
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Kategori</label>
-                        <select name="category" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none">
-                            <option>Sains</option>
-                            <option>Teknologi</option>
-                            <option>Sastra</option>
-                        </select>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Upload Cover Buku</label>
-                        <div class="relative w-full h-32 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer">
-                            <input type="file" name="cover" required class="absolute inset-0 opacity-0 cursor-pointer">
-                            <div class="text-center text-gray-400 text-sm font-medium">Klik untuk pilih gambar cover</div>
-                        </div>
-                    </div>
+            <hr class="border-gray-50" />
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1"
+                  >ID Modul</label
+                >
+                <p
+                  class="text-sm text-gray-500 font-mono"
+                  x-text="'#' + selectedBook.id"
+                ></p>
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1"
+                  >Status</label
+                >
+                <div class="flex items-center text-green-600">
+                  <span
+                    class="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"
+                  ></span>
+                  <span class="text-xs font-bold uppercase">Aktif</span>
                 </div>
-                
-                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-50">
-                    <button type="button" @click="openAdd = false" class="px-8 py-3 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition">Batal</button>
-                    <button type="submit" class="px-10 py-3 bg-[#2A3A20] text-white font-bold rounded-2xl shadow-lg shadow-[#2A3A20]/20 hover:bg-black transition">Simpan Modul</button>
-                </div>
-            </form>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
 
+        <div class="mt-10 pt-6 border-t border-gray-50 flex justify-end gap-6">
+          <a
+            :href="selectedBook.url"
+            class="inline-flex items-center justify-center px-8 py-3 bg-[#2A3A20] text-white font-bold rounded-2xl shadow-lg shadow-[#2A3A20]/20 hover:bg-black transition-all transform hover:scale-105"
+          >
+            <svg
+              class="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
+            </svg>
+            Buka Modul
+          </a>
+          <button
+            type="button"
+            @click="openDetail = false"
+            class="px-10 py-3 bg-[#2A3A20] text-white font-bold rounded-2xl shadow-lg shadow-[#2A3A20]/20 hover:bg-black transition"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <nav class="flex items-center space-x-2">
+      {% if page_obj.has_previous %}
+      <a
+        href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}"
+        class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition"
+        >←</a
+      >
+      {% endif %}
+
+      <div
+        class="flex bg-white rounded-2xl shadow-sm border border-gray-100 p-1"
+      >
+        {% for num in page_obj.paginator.page_range %} {% if page_obj.number ==
+        num %}
+        <span
+          class="w-10 h-10 flex items-center justify-center bg-[#2A3A20] text-white rounded-xl font-bold text-sm"
+          >{{ num }}</span
+        >
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'
+        %}
+        <a
+          href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}"
+          class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#2A3A20] font-medium text-sm"
+          >{{ num }}</a
+        >
+        {% endfor %}
+      </div>
+
+      {% if page_obj.has_next %}
+      <a
+        href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}"
+        class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition"
+        >→</a
+      >
+      {% endif %}
+    </nav>
+  </div>
+
+  <div
+    x-show="openAdd"
+    class="fixed inset-0 z-[160] flex items-center justify-center p-4"
+    x-cloak
+  >
+    <div
+      class="fixed inset-0 bg-[#2A3A20]/40 backdrop-blur-sm"
+      @click="openAdd = false"
+    ></div>
+    <div
+      class="relative bg-white rounded-[40px] shadow-2xl max-w-2xl w-full p-10 overflow-hidden border border-gray-100"
+    >
+      <h3 class="text-2xl font-extrabold text-[#2A3A20] mb-8">
+        Tambah Modul Baru
+      </h3>
+
+      <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <div class="grid grid-cols-2 gap-6">
+          <div class="col-span-2">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-2"
+              >Judul Buku</label
+            >
+            <input
+              type="text"
+              name="title"
+              required
+              class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-[#2A3A20] outline-none transition-all"
+            />
+          </div>
+          <div class="col-span-1">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-2"
+              >Penulis (Author)</label
+            >
+            <input
+              type="text"
+              name="author"
+              required
+              class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-[#2A3A20] outline-none"
+            />
+          </div>
+          <div class="col-span-1">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-2"
+              >Kategori</label
+            >
+            <select
+              name="category"
+              class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none"
+            >
+              <option>Sains</option>
+              <option>Teknologi</option>
+              <option>Sastra</option>
+            </select>
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-2"
+              >Upload Cover Buku</label
+            >
+            <div
+              class="relative w-full h-32 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer"
+            >
+              <input
+                type="file"
+                name="cover"
+                required
+                class="absolute inset-0 opacity-0 cursor-pointer"
+              />
+              <div class="text-center text-gray-400 text-sm font-medium">
+                Klik untuk pilih gambar cover
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-50">
+          <button
+            type="button"
+            @click="openAdd = false"
+            class="px-8 py-3 text-gray-500 font-bold rounded-2xl hover:bg-gray-50 transition"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            class="px-10 py-3 bg-[#2A3A20] text-white font-bold rounded-2xl shadow-lg shadow-[#2A3A20]/20 hover:bg-black transition"
+          >
+            Simpan Modul
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+></script>
 
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from modules.views import manage_modul 
+from modules.views import manage_modules 
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
@@ -43,6 +43,26 @@ def manage_classes(request):
                 'chapters': total_chapters, # Pastikan ini konsisten
             })
 
+        student_list = []
+        student_ids_raw = cls.get('daftar_siswa', [])
+        student_object_ids = []
+        for sid in student_ids_raw:
+            if isinstance(sid, ObjectId):
+                student_object_ids.append(sid)
+            else:
+                try:
+                    student_object_ids.append(ObjectId(str(sid).strip()))
+                except:
+                    pass
+        students_data = list(users_collection.find({"_id": {"$in": student_object_ids}}))
+        for stu in students_data:
+            student_list.append({
+                'id': str(stu['_id']),
+                'nama': stu.get('nama_lengkap', stu.get('username', 'Siswa')),
+                'nim': stu.get('nim', '-'),
+            })
+        
+
         # 5. Rangkai data kelas
         kelas_dict = {
             'id': str(cls['_id']),
@@ -53,7 +73,8 @@ def manage_classes(request):
             'jumlah_siswa': len(cls.get('daftar_siswa', [])),
             'total_modul': len(modul_ids_str),
             'status': cls.get('status', 'Active'),        # Default (tidak terlihat di skema)
-            'modul_list': modul_list
+            'modul_list': modul_list,
+            'student_list': student_list
         }
         
         daftar_kelas.append(kelas_dict)
@@ -126,6 +147,7 @@ def add_module(request, class_id):
 from bson.errors import InvalidId
 
 def get_class_details(request, class_id):
+    print(f"DEBUG: Menerima ID: {class_id}") # Cek di terminal Django
     try:
         # Konversi class_id ke ObjectId untuk pencarian
         obj_id = ObjectId(class_id)
@@ -171,15 +193,15 @@ def get_class_details(request, class_id):
         }))
         
         data = {
-            "judul_kelas": kelas.get('nama_kelas', 'Unnamed Class'),
-            "nama_mentor": mentor,
-            "siswa": siswa_details, # Kirim objek detail, bukan cuma list ID
+            "judul_kelas": str(kelas.get('nama_kelas', 'Unnamed Class')),
+            "nama_mentor": str(mentor),
+            "siswa": siswa_details, 
             "modul": [
-                {"judul": m.get('judul_modul', 'Untitled Module')} for m in modul_query
+                {"judul": str(m.get('judul_modul', 'Untitled Module'))} for m in modul_query
             ]
         }
         
-        return JsonResponse(data)
+        return JsonResponse(data, safe=False) # Tambahkan safe=False untuk berjaga-jaga
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)

@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editor Materi - {{ module.judul_modul }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- CKEditor CDN -->
+    <!-- <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script> -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/super-build/ckeditor.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header
+      class="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-50"
+    >
+      <div class="flex items-center gap-4">
+        <a
+          href="{% url 'manage_modules' %}"
+          class="p-2 hover:bg-gray-100 rounded-full transition"
+        >
+          <i class="fa-solid fa-arrow-left text-[#2A3A20]"></i>
+        </a>
+        <div>
+          <h1 class="text-xl font-bold text-[#2A3A20]">
+            {{ module.judul_modul }}
+          </h1>
+          <p class="text-xs text-gray-400">ID Modul: #{{ module_id }}</p>
+        </div>
+      </div>
+      <button
+        form="form-editor"
+        type="submit"
+        class="bg-[#2A3A20] text-white px-8 py-2.5 rounded-xl font-bold shadow-lg hover:bg-black transition"
+      >
+        Simpan Perubahan
+      </button>
+    </header>
+
+    <div class="flex h-[calc(100-73px)]">
+      <!-- Sidebar: Daftar Bab -->
+      <aside
+        class="w-1/4 bg-white border-r border-gray-200 overflow-y-auto p-6"
+      >
+        <h2
+          class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6"
+        >
+          Struktur Kurikulum
+        </h2>
+
+        <div class="space-y-6">
+          {% for sub in module.sub_modul %}
+          <div>
+            <h3
+              class="text-sm font-extrabold text-[#2A3A20] mb-3 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-folder-open text-yellow-500"></i>
+              {{ sub.judul_sub_modul }}
+            </h3>
+            <div class="space-y-1 ml-4 border-l-2 border-gray-100">
+              {% for bab in sub.bab %}
+              <button
+                type="button"
+                data-id="{{ bab.id_bab }}"
+                data-judul="{{ bab.judul_bab }}"
+                data-konten="{{ bab.konten }}"
+                onclick="loadContent(this)"
+                class="btn-bab w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-green-50 hover:text-green-700 transition rounded-r-lg block border-l-2 border-transparent hover:border-green-600"
+              >
+                {{ bab.judul_bab }}
+              </button>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </aside>
+
+      <!-- Area Editor Utama -->
+      <!-- Area Editor Utama -->
+      <main class="w-3/4 p-10 bg-white">
+        <form
+          id="form-editor"
+          action="{% url 'save_module_content' module_id %}"
+          method="POST"
+          class="max-w-4xl mx-auto"
+        >
+          {% csrf_token %}
+          <!-- 1. Hidden Input untuk ID Bab yang diedit -->
+          <input type="hidden" name="id_bab" id="id_bab_input" />
+
+          <div class="mb-8">
+            <label
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2"
+            >
+              Judul Bab
+            </label>
+            <input
+              type="text"
+              name="judul_bab"
+              id="judul_bab_display"
+              class="text-3xl font-extrabold text-[#2A3A20] w-full border-none focus:ring-0 p-0 placeholder-gray-200"
+              placeholder="Pilih bab di samping untuk mulai mengedit..."
+            />
+          </div>
+
+          <div class="prose max-w-none">
+            <!-- 2. Kontainer Editor (Pengganti Textarea) -->
+            <div id="editor_materi">
+              <p class="text-gray-300">
+                Pilih bab di samping untuk mulai menulis...
+              </p>
+            </div>
+
+            <!-- 3. Hidden Input untuk menampung data CKEditor saat disubmit -->
+            <input type="hidden" name="konten" id="konten_hidden" />
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <script>
+      //       let myEditor;
+
+      //   // 1. Inisialisasi CKEditor 5 Superbuild yang benar
+      //   CKEDITOR.ClassicEditor
+      //     .create(document.querySelector("#editor_materi"), {
+      //       // Aktifkan plugin Source Editing dan HTML Support
+      //       style: {
+      //     definitions: [
+      //         {
+      //             name: 'Highlight Hijau',
+      //             element: 'span',
+      //             classes: [ 'bg-green-100', 'text-green-800', 'font-bold', 'px-1' ]
+      //         },
+      //         {
+      //             name: 'Section Materi',
+      //             element: 'section',
+      //             classes: [ 'border-l-4', 'border-green-600', 'pl-4', 'my-4', 'py-2', 'bg-gray-50' ]
+      //         },
+      //         {
+      //             name: 'Catatan Penting',
+      //             element: 'div',
+      //             classes: [ 'rounded-lg', 'p-4', 'bg-yellow-50', 'border', 'border-yellow-200' ]
+      //         }
+      //     ]
+      // },
+      //       plugins: [
+      //         'SourceEditing',
+      //         'GeneralHtmlSupport',
+      //         'Essentials',
+      //         'Paragraph',
+      //         'Heading',
+      //         'Bold',
+      //         'Italic',
+      //         'List',
+      //         'Table',
+      //         'TableToolbar'
+      //       ],
+      //       toolbar: [
+      //         'sourceEditing', '|',
+      //         'heading', '|',
+      //         'bold', 'italic', '|',
+      //         'bulletedList', 'numberedList', '|',
+      //         'insertTable', 'undo', 'redo'
+      //       ],
+      //       // Izinkan semua tag HTML dari database agar tidak dibersihkan otomatis
+      //       htmlSupport: {
+      //         allow: [
+      //           {
+      //             name: /.*/,
+      //             attributes: true,
+      //             classes: true,
+      //             styles: true
+      //           }
+      //         ]
+      //       }
+      //     })
+      //     .then((editor) => {
+      //       myEditor = editor;
+      //       console.log("Editor berhasil dimuat!");
+
+      //       // Load otomatis bab pertama saat editor sudah siap
+      //       const firstBabButton = document.querySelector('.btn-bab');
+      //       if (firstBabButton) {
+      //           firstBabButton.click();
+      //       }
+      //     })
+      //     .catch((error) => {
+      //       console.error("Gagal memuat editor:", error);
+      //     });
+
+      //       // Fungsi klik bab
+      //       function loadContent(element) {
+      //         if (!myEditor) return;
+
+      //         const idBab = element.getAttribute("data-id");
+      //         let judul = element.getAttribute("data-judul");
+      //         let kontenAsli = element.getAttribute("data-konten");
+
+      //         // Fungsi untuk memulihkan karakter HTML asli secara aman
+      //         const decodeHTML = (str) => {
+      //           if (!str) return "";
+      //           let txt = document.createElement("textarea");
+      //           txt.innerHTML = str;
+      //           let decoded = txt.value;
+
+      //           // Konversi paksa jika masih ada sisa-sisa format unicode literal
+      //           return decoded
+      //             .replace(/\\u003C/g, "<")
+      //             .replace(/\\u003E/g, ">")
+      //             .replace(/\\u0026/g, "&")
+      //             .replace(/\\u0022/g, '"')
+      //             .replace(/\\u0027/g, "'");
+      //         };
+
+      //         judul = decodeHTML(judul);
+      //         kontenAsli = decodeHTML(kontenAsli);
+
+      //         document.getElementById("id_bab_input").value = idBab;
+      //         document.getElementById("judul_bab_display").value = judul;
+
+      //         // Efek CSS aktif pada tombol sidebar
+      //         document.querySelectorAll(".btn-bab").forEach((btn) => {
+      //           btn.classList.remove(
+      //             "bg-green-50",
+      //             "text-green-700",
+      //             "border-green-600",
+      //           );
+      //         });
+      //         element.classList.add(
+      //           "bg-green-50",
+      //           "text-green-700",
+      //           "border-green-600",
+      //         );
+
+      //         // Masukkan ke CKEditor
+      //         if (kontenAsli && kontenAsli !== "None" && kontenAsli.trim() !== "") {
+      //           myEditor.setData(kontenAsli);
+      //         } else {
+      //           myEditor.setData("<p>Mulai menulis materi di sini...</p>");
+      //         }
+      //       }
+
+      //       // Logika sinkronisasi data saat submit form
+      //       document.getElementById("form-editor").onsubmit = function () {
+      //         if (myEditor) {
+      //           document.getElementById("konten_hidden").value = myEditor.getData();
+      //         }
+      //       };
+
+      // window.addEventListener('DOMContentLoaded', (event) => {
+      //     // Tunggu sampai CKEditor benar-benar siap
+      //     setTimeout(() => {
+      //         // Cari tombol bab pertama di sidebar
+      //         const firstBabButton = document.querySelector('.btn-bab');
+      //         if (firstBabButton) {
+      //             // Lakukan klik otomatis pada bab pertama
+      //             firstBabButton.click();
+      //         }
+      //     }, 500); // Memberikan jeda 500ms agar CKEditor selesai loading
+      // });
+
+      let myEditor;
+
+      // 1. Inisialisasi CKEditor 5 Superbuild
+      CKEDITOR.ClassicEditor.create(document.querySelector("#editor_materi"), {
+        // DAFTAR PLUGIN (Mesin Editor)
+        plugins: [
+          "SourceEditing",
+          "GeneralHtmlSupport",
+          "Essentials",
+          "Paragraph",
+          "Heading",
+          "Bold",
+          "Italic",
+          "List",
+          "Table",
+          "TableToolbar",
+          "Style",
+          "Highlight",
+          "MediaEmbed",
+          "Link",
+          // PLUGIN WAJIB UNTUK GAMBAR:
+          "Image",
+          "ImageToolbar",
+          "ImageCaption",
+          "ImageStyle",
+          "ImageInsert",
+          "AutoImage",
+        ],
+
+        // KONFIGURASI STYLE (Menu Dropdown untuk Mentor)
+        style: {
+          definitions: [
+            {
+              name: "Highlight Hijau",
+              element: "span",
+              classes: ["bg-green-100", "text-green-800", "font-bold", "px-1"],
+            },
+            {
+              name: "Section Materi",
+              element: "section",
+              classes: [
+                "border-l-4",
+                "border-green-600",
+                "pl-4",
+                "my-4",
+                "py-2",
+                "bg-gray-50",
+              ],
+            },
+            {
+              name: "Catatan Penting",
+              element: "div",
+              classes: [
+                "rounded-lg",
+                "p-4",
+                "bg-yellow-50",
+                "border",
+                "border-yellow-200",
+              ],
+            },
+          ],
+        },
+
+        // TOOLBAR (Tombol yang muncul di layar)
+        toolbar: [
+          "undo",
+          "redo",
+          "|",
+          "style",
+          "heading",
+          "|",
+          "bold",
+          "italic",
+          "highlight",
+          "|",
+          "bulletedList",
+          "numberedList",
+          "|",
+          "insertImage", // <--- INI ADALAH TOMBOL UNTUK GAMBAR (Bukan mediaEmbed)
+          "insertTable",
+          "mediaEmbed",
+          "link",
+          "|",
+          "sourceEditing",
+        ],
+
+        // Izinkan semua tag agar tidak terhapus otomatis
+        htmlSupport: {
+          allow: [
+            {
+              name: /.*/,
+              attributes: true,
+              classes: true,
+              styles: true,
+            },
+          ],
+        },
+      })
+        .then((editor) => {
+          myEditor = editor;
+          console.log("Editor Nyakola Berhasil Dimuat!");
+
+          // Auto-click bab pertama
+          const firstBabButton = document.querySelector(".btn-bab");
+          if (firstBabButton) {
+            firstBabButton.click();
+          }
+        })
+        .catch((error) => {
+          console.error("Gagal memuat editor:", error);
+        });
+
+      // 2. Fungsi Klik Bab Sidebar
+      function loadContent(element) {
+        if (!myEditor) return;
+
+        const idBab = element.getAttribute("data-id");
+        let judul = element.getAttribute("data-judul");
+        let kontenAsli = element.getAttribute("data-konten");
+
+        const decodeHTML = (str) => {
+          if (!str) return "";
+          let txt = document.createElement("textarea");
+          txt.innerHTML = str;
+          let decoded = txt.value;
+          return decoded
+            .replace(/\\u003C/g, "<")
+            .replace(/\\u003E/g, ">")
+            .replace(/\\u0026/g, "&")
+            .replace(/\\u0022/g, '"')
+            .replace(/\\u0027/g, "'");
+        };
+
+        judul = decodeHTML(judul);
+        kontenAsli = decodeHTML(kontenAsli);
+
+        document.getElementById("id_bab_input").value = idBab;
+        document.getElementById("judul_bab_display").value = judul;
+
+        // Reset warna tombol sidebar
+        document.querySelectorAll(".btn-bab").forEach((btn) => {
+          btn.classList.remove(
+            "bg-green-50",
+            "text-green-700",
+            "border-green-600",
+          );
+        });
+        element.classList.add(
+          "bg-green-50",
+          "text-green-700",
+          "border-green-600",
+        );
+
+        // Masukkan konten ke Editor
+        if (kontenAsli && kontenAsli !== "None" && kontenAsli.trim() !== "") {
+          myEditor.setData(kontenAsli);
+        } else {
+          myEditor.setData("<p>Mulai menulis materi di sini...</p>");
+        }
+      }
+
+      // 3. Sinkronisasi Saat Submit
+      document.getElementById("form-editor").onsubmit = function () {
+        if (myEditor) {
+          document.getElementById("konten_hidden").value = myEditor.getData();
+        }
+      };
+    </script>
+  </body>
+</html>

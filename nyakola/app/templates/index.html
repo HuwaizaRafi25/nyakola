@@ -1,15 +1,25 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nyakola - Berakar, Bertumbuh, Berilmu</title>
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"
+    ></script>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
+
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
     <script>
       tailwind.config = {
@@ -30,22 +40,16 @@
       };
     </script>
     <style>
-      @keyframes fade-in-up {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .animate-up {
-        animation: fade-in-up 0.8s ease-out forwards;
-      }
       .glass {
-        background: rgba(254, 250, 224, 0.8);
-        backdrop-filter: blur(10px);
+        background: rgba(254, 250, 224, 0.85);
+        backdrop-filter: blur(12px);
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
       }
     </style>
   </head>
@@ -53,10 +57,13 @@
     class="bg-[#FCF9F0] text-forest font-sans selection:bg-caramel selection:text-white"
     x-data="{ mobileMenuOpen: false }"
   >
-    <nav class="fixed w-full z-50 glass border-b border-olive/10">
+    <!-- NAVBAR -->
+    <nav
+      class="fixed w-full z-50 glass border-b border-olive/10 transition-all duration-300"
+    >
       <div class="max-w-7xl mx-auto px-6">
         <div class="flex justify-between h-20 items-center">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-3">
             <div
               class="w-10 h-10 bg-forest rounded-xl flex items-center justify-center rotate-3 shadow-lg"
             >
@@ -68,26 +75,33 @@
           </div>
 
           <div
-            class="hidden md:flex space-x-10 text-sm font-semibold uppercase tracking-widest text-forest/70"
+            class="hidden md:flex space-x-8 text-sm font-bold uppercase tracking-widest text-forest/80"
           >
-            <a href="#filosofi" class="hover:text-olive transition">Filosofi</a>
             <a href="#fitur" class="hover:text-olive transition">Ekosistem</a>
-            <a href="#library" class="hover:text-olive transition">Library</a>
+            <a href="#role" class="hover:text-olive transition">Peran</a>
+            <a href="#katalog" class="hover:text-olive transition"
+              >Katalog Kelas</a
+            >
+            <a href="#catatan-akar" class="hover:text-olive transition"
+              >Jurnal</a
+            >
           </div>
 
-          <div class="hidden md:flex items-center gap-6">
+          <div class="hidden md:flex items-center gap-4">
             <a
               href="login"
-              class="text-sm font-bold text-forest hover:text-copper transition"
+              class="text-sm font-bold text-forest hover:text-copper transition px-4"
               >Masuk</a
             >
             <a
               href="register"
-              class="bg-forest text-cornsilk px-7 py-3 rounded-full text-sm font-bold hover:bg-olive transition shadow-md"
-              >Mulai Belajar</a
+              class="bg-forest text-cornsilk px-6 py-2.5 rounded-full text-sm font-bold hover:bg-olive transition shadow-md flex items-center gap-2"
             >
+              Mulai Belajar ↗
+            </a>
           </div>
 
+          <!-- Mobile Toggle -->
           <button
             @click="mobileMenuOpen = !mobileMenuOpen"
             class="md:hidden p-2 text-forest"
@@ -99,382 +113,997 @@
               viewBox="0 0 24 24"
             >
               <path
+                x-show="!mobileMenuOpen"
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
                 d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+              <path
+                x-show="mobileMenuOpen"
+                style="display: none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
               ></path>
             </svg>
           </button>
         </div>
       </div>
 
+      <!-- Mobile Menu -->
       <div
         x-show="mobileMenuOpen"
-        x-cloak
-        class="md:hidden bg-cornsilk border-b border-olive/20 p-6 space-y-4"
+        x-collapse
+        class="md:hidden bg-cornsilk border-b border-olive/20 px-6 py-4 space-y-4 shadow-xl"
       >
-        <a href="#filosofi" class="block font-bold">Filosofi</a>
-        <a href="#fitur" class="block font-bold">Ekosistem</a>
-        <a href="#library" class="block font-bold">Library</a>
-        <hr class="border-olive/10" />
+        <a href="#fitur" @click="mobileMenuOpen = false" class="block font-bold"
+          >Ekosistem</a
+        >
+        <a href="#role" @click="mobileMenuOpen = false" class="block font-bold"
+          >Peran</a
+        >
         <a
-          href="#"
+          href="#katalog"
+          @click="mobileMenuOpen = false"
+          class="block font-bold"
+          >Katalog Kelas</a
+        >
+        <hr class="border-olive/10" />
+        <a href="login" class="block font-bold">Masuk</a>
+        <a
+          href="register"
           class="block bg-forest text-cornsilk text-center py-3 rounded-full font-bold"
           >Daftar Sekarang</a
         >
       </div>
     </nav>
 
+    <!-- HERO SECTION -->
     <section class="relative pt-32 pb-20 overflow-hidden">
       <div
-        class="max-w-7xl mx-auto px-6 grid md:grid-cols-12 gap-12 items-center"
+        class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center"
       >
-        <div class="md:col-span-7 animate-up">
+        <div data-aos="fade-right">
           <div
-            class="inline-block px-4 py-1 rounded-full bg-olive/10 text-olive text-xs font-bold uppercase tracking-widest mb-6"
+            class="inline-flex items-center gap-2 bg-olive/10 text-olive px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6"
           >
-            Platform Edukasi Berbasis Karakter
+            <span class="w-2 h-2 rounded-full bg-olive animate-pulse"></span>
+            Hybrid Learning Platform
           </div>
           <h1
-            class="text-5xl md:text-7xl font-serif font-bold text-forest leading-[1.1] mb-8"
+            class="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-forest leading-[1.1] mb-6"
           >
             Bukan Sekadar Belajar, <br />
             <span class="text-copper italic underline decoration-caramel/30"
               >Tapi Berakar.</span
             >
           </h1>
-          <p class="text-lg text-forest/70 max-w-xl leading-relaxed mb-10">
-            Nyakola menghadirkan pengalaman belajar yang menyatu. Dari modul
-            materi, ujian, hingga tugas akhir yang didampingi AI—semuanya
-            dirancang agar Anda tidak hanya tahu, tapi paham dan mampu.
+          <p class="text-lg text-forest/70 max-w-lg leading-relaxed mb-8">
+            Platform edukasi fleksibel. Ikuti kelas publik gratis, beli modul
+            premium, atau masukkan kode rahasia untuk kelas privat
+            kampusmu—semua didampingi Tutor AI.
           </p>
           <div class="flex flex-wrap gap-4">
-            <button
-              class="bg-forest text-cornsilk px-10 py-4 rounded-full font-bold text-lg hover:bg-olive transition-all transform hover:scale-105 shadow-xl"
+            <a
+              href="#katalog"
+              class="bg-forest text-cornsilk px-8 py-3.5 rounded-full font-bold hover:bg-olive transition shadow-lg flex items-center gap-2"
             >
-              Jelajahi Kelas
-            </button>
-            <button
-              class="bg-transparent border-2 border-forest/20 text-forest px-10 py-4 rounded-full font-bold text-lg hover:bg-cornsilk transition"
+              Jelajahi Kelas ↗
+            </a>
+            <a
+              href="#role"
+              class="bg-transparent border border-forest/30 text-forest px-8 py-3.5 rounded-full font-bold hover:bg-forest/5 transition"
             >
-              Lihat Kurikulum
-            </button>
+              Jadi Mentor
+            </a>
           </div>
         </div>
 
-        <div
-          class="md:col-span-5 relative animate-up"
-          style="animation-delay: 0.2s"
-        >
+        <div class="relative hidden lg:block" data-aos="fade-left">
+          <!-- Main Visual/Image Placeholder -->
           <div
-            class="relative z-10 bg-caramel/20 rounded-[2rem] p-4 rotate-2 shadow-2xl"
+            class="w-full h-[500px] bg-gradient-to-br from-caramel/40 to-olive/20 rounded-[2.5rem] shadow-2xl flex items-center justify-center overflow-hidden border border-white/50 relative"
           >
+            <!-- Placeholder Content -->
             <div
-              class="bg-forest rounded-[1.5rem] aspect-[4/5] overflow-hidden flex items-center justify-center"
+              class="text-center p-8 bg-white/40 backdrop-blur-md rounded-3xl border border-white/60 shadow-sm"
             >
-              <span class="text-cornsilk/20 text-9xl font-serif italic">N</span>
+              <span class="text-forest/30 text-8xl font-serif italic mb-4 block"
+                >N</span
+              >
+              <p class="font-bold text-forest/60">Ruang Kelas Digital</p>
             </div>
           </div>
+
+          <!-- Floating Badge 1 -->
           <div
-            class="absolute -top-10 -right-10 w-40 h-40 bg-cornsilk rounded-full blur-3xl opacity-60"
-          ></div>
+            data-aos="zoom-in"
+            data-aos-delay="300"
+            class="absolute -left-8 top-12 bg-white/90 backdrop-blur p-4 rounded-2xl shadow-xl border border-olive/10 flex items-center gap-3"
+          >
+            <div class="bg-olive text-white p-2.5 rounded-xl">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                ></path>
+              </svg>
+            </div>
+            <div>
+              <p
+                class="text-[10px] text-forest/60 uppercase font-bold tracking-wider"
+              >
+                Komunitas
+              </p>
+              <p class="font-serif font-bold text-lg text-forest">
+                10k+ Learner
+              </p>
+            </div>
+          </div>
+
+          <!-- Floating Badge 2 -->
           <div
-            class="absolute -bottom-10 -left-10 w-60 h-60 bg-olive/20 rounded-full blur-3xl opacity-40"
-          ></div>
+            data-aos="zoom-in"
+            data-aos-delay="500"
+            class="absolute -right-6 bottom-16 bg-white/90 backdrop-blur p-4 rounded-2xl shadow-xl border border-olive/10"
+          >
+            <p
+              class="text-[10px] text-forest/60 uppercase font-bold tracking-wider"
+            >
+              Tutor Cerdas
+            </p>
+            <p class="font-serif font-bold text-2xl text-forest mt-1">
+              AI Assistant
+            </p>
+            <p
+              class="text-xs text-olive font-medium mt-1 flex items-center gap-1"
+            >
+              ● Terintegrasi Modul
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="fitur" class="py-24 bg-forest text-cornsilk">
+    <!-- EKOSISTEM (BENTO GRID) -->
+    <section id="fitur" class="py-24 bg-white relative">
       <div class="max-w-7xl mx-auto px-6">
-        <div class="grid md:grid-cols-2 gap-16 items-center">
-          <div>
-            <h2 class="text-4xl font-serif font-bold mb-6">
-              Ekosistem Nyakola
-            </h2>
-            <p class="text-cornsilk/70 mb-12 text-lg">
-              Kami percaya pendidikan harus utuh. Tiap fitur di Nyakola
-              dirancang untuk saling menguatkan.
+        <div class="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-olive"
+            >/ Arsitektur Platform</span
+          >
+          <h2
+            class="text-4xl md:text-5xl font-serif font-bold text-forest mt-3 mb-4"
+          >
+            Ekosistem Nyakola
+          </h2>
+          <p class="text-forest/70 text-lg">
+            Pendidikan tidak boleh terpisah-pisah. Semua alat yang Mentor dan
+            Learner butuhkan terhubung dalam satu pangkalan data.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[280px]">
+          <!-- Fitur 1: AI Assistant (Besar - Span 2) -->
+          <article
+            class="md:col-span-2 group relative overflow-hidden rounded-[2rem] border border-olive/10 bg-[#FCF9F0] p-8 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-olive/10"
+            data-aos="fade-up"
+            data-aos-delay="0"
+          >
+            <div class="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <span
+                  class="grid h-14 w-14 place-items-center rounded-2xl bg-olive text-white mb-6 shadow-md"
+                >
+                  <svg
+                    class="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    ></path>
+                  </svg>
+                </span>
+                <h3 class="font-serif text-3xl font-bold text-forest mb-3">
+                  Integrated AI Assistant
+                </h3>
+                <p class="text-forest/70 text-lg max-w-md">
+                  Tanya apa saja seputar modulmu. AI kami memahami konteks
+                  materi yang sedang dibaca secara spesifik, bukan sekadar
+                  jawaban umum.
+                </p>
+              </div>
+            </div>
+            <!-- Efek bulat hover -->
+            <span
+              class="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-olive/10 transition-transform duration-700 group-hover:scale-150"
+            ></span>
+          </article>
+
+          <!-- Fitur 2: Private Class -->
+          <article
+            class="group relative overflow-hidden rounded-[2rem] border border-olive/10 bg-forest p-8 text-cornsilk transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div class="relative z-10 flex flex-col h-full">
+              <span
+                class="grid h-12 w-12 place-items-center rounded-xl bg-white/10 text-caramel mb-6"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  ></path>
+                </svg>
+              </span>
+              <h3 class="font-serif text-2xl font-bold mb-2">
+                Secure Private Class
+              </h3>
+              <p class="text-cornsilk/70 text-sm">
+                Gunakan sistem Invite Code untuk menjaga kelas eksklusif bagi
+                instansi atau bimbingan privat.
+              </p>
+            </div>
+            <span
+              class="pointer-events-none absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-caramel/20 transition-transform duration-500 group-hover:scale-150"
+            ></span>
+          </article>
+
+          <!-- Fitur 3: Monetasisi Mentor -->
+          <article
+            class="group relative overflow-hidden rounded-[2rem] border border-olive/10 bg-[#FCF9F0] p-8 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-olive/10"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="relative z-10 flex flex-col h-full">
+              <span
+                class="grid h-12 w-12 place-items-center rounded-xl bg-caramel/20 text-copper mb-6"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </span>
+              <h3 class="font-serif text-2xl font-bold text-forest mb-2">
+                Komersialisasi Kelas
+              </h3>
+              <p class="text-forest/70 text-sm">
+                Mentor memegang kendali penuh. Atur kelas menjadi Gratis
+                (publik) atau Berbayar (premium) dengan mudah.
+              </p>
+            </div>
+          </article>
+
+          <!-- Fitur 4: Learning Library (Span 2) -->
+          <article
+            class="md:col-span-2 group relative overflow-hidden rounded-[2rem] border border-olive/10 bg-[#FCF9F0] p-8 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-olive/10"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
+            <div class="relative z-10 flex flex-row items-center h-full gap-8">
+              <div class="flex-1">
+                <span
+                  class="grid h-12 w-12 place-items-center rounded-xl bg-olive/20 text-olive mb-4"
+                >
+                  <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    ></path>
+                  </svg>
+                </span>
+                <h3 class="font-serif text-2xl font-bold text-forest mb-2">
+                  Learning Library Terpusat
+                </h3>
+                <p class="text-forest/70 text-sm max-w-md">
+                  Akses koleksi modul, referensi, dan materi ekstra. Ilmu tidak
+                  boleh dibatasi hanya oleh satu kurikulum kelas.
+                </p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- DUAL ROLE (KONTRAST) -->
+    <section id="role" class="py-24 bg-cornsilk">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+          <span class="text-xs font-bold uppercase tracking-[0.2em] text-olive"
+            >/ Model Interaksi</span
+          >
+          <h2 class="text-4xl font-serif font-bold text-forest mt-2 mb-4">
+            Satu Platform, Dua Peluang
+          </h2>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8">
+          <!-- Card Kiri: MENTOR (Gelap) -->
+          <div
+            data-aos="fade-right"
+            class="bg-forest text-cornsilk p-10 md:p-14 rounded-[2.5rem] relative overflow-hidden shadow-2xl"
+          >
+            <!-- Dekorasi background -->
+            <svg
+              class="absolute top-0 right-0 w-64 h-64 text-white/5 -translate-y-1/4 translate-x-1/4"
+              fill="currentColor"
+              viewBox="0 0 100 100"
+            >
+              <circle cx="50" cy="50" r="50" />
+            </svg>
+
+            <div class="relative z-10">
+              <div
+                class="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-caramel mb-8"
+              >
+                Untuk Mentor & Dosen
+              </div>
+              <h3 class="font-serif text-4xl font-bold mb-6">
+                Bangun Ekosistem Mengajarmu
+              </h3>
+              <p class="text-cornsilk/80 text-lg mb-10 leading-relaxed">
+                Buat kelas, atur harga (gratis/berbayar), atau buat sesi privat
+                dengan kode unik. Otomatisasi penilaian dibantu oleh AI
+                Assistant.
+              </p>
+
+              <ul class="space-y-4 mb-12 font-medium text-cornsilk/90">
+                <li class="flex items-center gap-4">
+                  <svg
+                    class="w-6 h-6 text-caramel"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    ></path>
+                  </svg>
+                  Buat kelas Publik atau Privat
+                </li>
+                <li class="flex items-center gap-4">
+                  <svg
+                    class="w-6 h-6 text-caramel"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    ></path>
+                  </svg>
+                  Monetisasi kelas tanpa batas
+                </li>
+                <li class="flex items-center gap-4">
+                  <svg
+                    class="w-6 h-6 text-caramel"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    ></path>
+                  </svg>
+                  Manajemen *student* yang rapi
+                </li>
+              </ul>
+
+              <a
+                href="register-mentor"
+                class="inline-flex items-center gap-2 bg-caramel text-white px-8 py-4 rounded-full font-bold hover:bg-copper transition w-full justify-center md:w-auto"
+              >
+                Daftar Sebagai Mentor ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Card Kanan: LEARNER (Terang) -->
+          <div
+            data-aos="fade-left"
+            class="bg-white border border-olive/15 relative overflow-hidden text-forest p-10 md:p-14 rounded-[2.5rem] shadow-xl"
+          >
+            <svg
+              class="absolute bottom-0 left-0 w-64 h-64 text-olive/10 translate-y-1/4 -translate-x-1/4"
+              fill="currentColor"
+              viewBox="0 0 100 100"
+            >
+              <circle cx="50" cy="50" r="50" />
+            </svg>
+            <div
+              class="inline-flex items-center gap-2 bg-olive/10 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest text-olive mb-8"
+            >
+              Untuk Learner & Siswa
+            </div>
+            <h3 class="font-serif text-4xl font-bold mb-6">
+              Eksplorasi Tanpa Batas
+            </h3>
+            <p class="text-forest/70 text-lg mb-10 leading-relaxed">
+              Ikuti kelas publik dari mentor ahli, beli modul spesifik untuk
+              *skill* baru, atau langsung *join* kelas kampusmu menggunakan kode
+              rahasia.
             </p>
 
-            <div class="space-y-8">
-              <div class="flex gap-6 group">
-                <div
-                  class="w-14 h-14 shrink-0 bg-olive rounded-2xl flex items-center justify-center group-hover:bg-caramel transition-colors"
+            <ul class="space-y-4 mb-12 font-medium text-forest/90">
+              <li class="flex items-center gap-4">
+                <svg
+                  class="w-6 h-6 text-olive"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    class="w-7 h-7"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                      stroke-width="2"
-                    ></path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="text-xl font-bold mb-2">
-                    Integrated AI Assistant
-                  </h4>
-                  <p class="text-cornsilk/60">
-                    Tanya apa saja seputar modulmu. AI kami memahami konteks
-                    materi yang sedang kamu pelajari secara mendalam.
-                  </p>
-                </div>
-              </div>
-
-              <div class="flex gap-6 group">
-                <div
-                  class="w-14 h-14 shrink-0 bg-olive rounded-2xl flex items-center justify-center group-hover:bg-caramel transition-colors"
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Akses AI Assistant 24/7
+              </li>
+              <li class="flex items-center gap-4">
+                <svg
+                  class="w-6 h-6 text-olive"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    class="w-7 h-7"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                      stroke-width="2"
-                    ></path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="text-xl font-bold mb-2">Learning Library</h4>
-                  <p class="text-cornsilk/60">
-                    Akses koleksi buku, jurnal, dan video edukasi gratis. Ilmu
-                    tidak boleh dibatasi oleh dinding kelas.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Akses kelas Gratis & Premium
+              </li>
+              <li class="flex items-center gap-4">
+                <svg
+                  class="w-6 h-6 text-olive"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Portofolio otomatis terbangun
+              </li>
+            </ul>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div
-              class="bg-olive/20 p-8 rounded-3xl border border-olive/30 mt-12"
+            <a
+              href="#katalog"
+              class="inline-flex items-center gap-2 bg-forest text-cornsilk px-8 py-4 rounded-full font-bold hover:bg-olive transition w-full justify-center md:w-auto"
             >
-              <div class="text-4xl font-serif italic text-caramel mb-2">3+</div>
-              <div
-                class="text-sm font-bold uppercase tracking-widest opacity-60"
-              >
-                Role Akses
-              </div>
-            </div>
-            <div class="bg-olive/20 p-8 rounded-3xl border border-olive/30">
-              <div class="text-4xl font-serif italic text-caramel mb-2">
-                100%
-              </div>
-              <div
-                class="text-sm font-bold uppercase tracking-widest opacity-60"
-              >
-                Terintegrasi
-              </div>
-            </div>
-            <div class="bg-olive/20 p-8 rounded-3xl border border-olive/30">
-              <div class="text-4xl font-serif italic text-caramel mb-2">
-                Secure
-              </div>
-              <div
-                class="text-sm font-bold uppercase tracking-widest opacity-60"
-              >
-                Private Class
-              </div>
-            </div>
-            <div
-              class="bg-olive/20 p-8 rounded-3xl border border-olive/30 mt-[-3rem]"
-            >
-              <div class="text-4xl font-serif italic text-caramel mb-2">
-                Global
-              </div>
-              <div
-                class="text-sm font-bold uppercase tracking-widest opacity-60"
-              >
-                Mentor
-              </div>
-            </div>
+              Mulai Eksplorasi ↗
+            </a>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="py-24 bg-cornsilk">
-      <div class="max-w-7xl mx-auto px-6 text-center mb-16">
-        <h2 class="text-4xl font-serif font-bold text-forest mb-4">
-          Pilih Jalur Belajarmu
-        </h2>
-        <p class="text-forest/60">
-          Nyakola menyediakan ruang bagi semua, dari yang ingin belajar mandiri
-          hingga bimbingan intensif.
-        </p>
-      </div>
-
-      <div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-8">
+    <!-- KATALOG KELAS (ALPINE.JS DINAMIS) -->
+    <section
+      id="katalog"
+      class="py-24 bg-[#FCF9F0]"
+      x-data="{ activeCategory: 'Semua' }"
+    >
+      <div class="max-w-7xl mx-auto px-6">
         <div
-          class="bg-white p-10 rounded-[2.5rem] border border-forest/5 shadow-xl hover:shadow-2xl transition group"
+          class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+          data-aos="fade-up"
         >
-          <div
-            class="text-olive font-bold uppercase tracking-widest text-xs mb-4"
-          >
-            Akses Terbuka
-          </div>
-          <h3 class="text-3xl font-serif font-bold mb-4">Kelas Publik</h3>
-          <p class="text-forest/60 mb-8">
-            Belajar bersama komunitas global dengan kurikulum standar industri.
-            Interaksi dinamis dan harga terjangkau.
-          </p>
-          <div class="mb-8">
-            <span class="text-4xl font-bold text-forest"
-              >Mulai dari Gratis</span
+          <div class="max-w-2xl">
+            <span
+              class="text-xs font-bold uppercase tracking-[0.2em] text-olive"
+              >/ Katalog Kelas Terbuka</span
             >
+            <h2
+              class="text-4xl md:text-5xl font-serif font-bold text-forest mt-3"
+            >
+              Pelajari *skill* baru hari ini.
+            </h2>
           </div>
-          <ul class="text-left space-y-4 mb-10 text-sm font-medium">
-            <li class="flex items-center gap-3">
-              <svg
-                class="w-5 h-5 text-olive"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
-              </svg>
-              Akses Modul Standard
-            </li>
-            <li class="flex items-center gap-3">
-              <svg
-                class="w-5 h-5 text-olive"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
-              </svg>
-              Forum Diskusi Umum
-            </li>
-            <li class="flex items-center gap-3">
-              <svg
-                class="w-5 h-5 text-olive"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
-              </svg>
-              AI Assistant Lite
-            </li>
-          </ul>
-          <button
-            class="w-full py-4 rounded-full border-2 border-forest text-forest font-bold hover:bg-forest hover:text-cornsilk transition"
-          >
-            Lihat Kelas
-          </button>
         </div>
 
+        <!-- Filter Tabs -->
         <div
-          class="bg-forest p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group"
+          class="flex overflow-x-auto pb-4 mb-10 hide-scrollbar"
+          data-aos="fade-up"
+          data-aos-delay="100"
         >
-          <div class="absolute top-0 right-0 p-6">
+          <div
+            class="flex bg-white border border-olive/20 rounded-full p-1.5 w-max"
+          >
+            <template
+              x-for="cat in ['Semua', 'Programming', 'Desain', 'Bisnis', 'Bebas Biaya']"
+              :key="cat"
+            >
+              <button
+                @click="activeCategory = cat"
+                :class="activeCategory === cat ? 'bg-forest text-cornsilk shadow-md' : 'text-forest/70 hover:text-forest'"
+                class="px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap"
+              >
+                <span x-text="cat"></span>
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <!-- Grid Kelas -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Item 1 (Programming / Berbayar) -->
+          <div
+            x-show="activeCategory === 'Semua' || activeCategory === 'Programming'"
+            x-transition.opacity.duration.300ms
+            class="bg-white border border-olive/10 rounded-[2rem] overflow-hidden group flex flex-col hover:shadow-xl transition-shadow duration-300"
+          >
+            <div class="h-48 bg-forest/5 relative p-6 flex items-end">
+              <div
+                class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full text-xs font-bold text-forest shadow-sm"
+              >
+                Programming
+              </div>
+              <!-- Cover Ilustrasi Abstrak -->
+              <div
+                class="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-olive via-forest to-transparent"
+              ></div>
+              <h3
+                class="font-serif font-bold text-2xl text-forest relative z-10 leading-tight"
+              >
+                Mastering SvelteKit & Tailwind
+              </h3>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-8 h-8 rounded-full bg-caramel flex items-center justify-center text-white text-xs font-bold"
+                >
+                  JD
+                </div>
+                <span class="text-sm font-medium text-forest/70"
+                  >John Doe, Lead Dev</span
+                >
+              </div>
+              <p class="text-sm text-forest/60 mb-6 flex-grow">
+                Pelajari konsep reaktivitas modern dan bangun aplikasi web
+                *fullstack* tanpa pusing mengatur state rumit.
+              </p>
+              <div
+                class="flex items-center justify-between pt-4 border-t border-olive/10"
+              >
+                <p class="font-bold text-xl text-forest">Rp 250.000</p>
+                <a
+                  href="#"
+                  class="w-10 h-10 rounded-full bg-olive/10 text-olive flex items-center justify-center group-hover:bg-olive group-hover:text-white transition-colors"
+                  >↗</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2 (Desain / Gratis) -->
+          <div
+            x-show="activeCategory === 'Semua' || activeCategory === 'Desain' || activeCategory === 'Bebas Biaya'"
+            x-transition.opacity.duration.300ms
+            class="bg-white border border-olive/10 rounded-[2rem] overflow-hidden group flex flex-col hover:shadow-xl transition-shadow duration-300"
+          >
+            <div class="h-48 bg-caramel/10 relative p-6 flex items-end">
+              <div
+                class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full text-xs font-bold text-forest shadow-sm"
+              >
+                Desain
+              </div>
+              <h3
+                class="font-serif font-bold text-2xl text-forest relative z-10 leading-tight"
+              >
+                UI/UX Fundamentals
+              </h3>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-8 h-8 rounded-full bg-olive flex items-center justify-center text-white text-xs font-bold"
+                >
+                  SN
+                </div>
+                <span class="text-sm font-medium text-forest/70"
+                  >Sarah N., Product Designer</span
+                >
+              </div>
+              <p class="text-sm text-forest/60 mb-6 flex-grow">
+                Pahami dasar-dasar hierarki visual, tipografi, dan *user
+                research* untuk pemula.
+              </p>
+              <div
+                class="flex items-center justify-between pt-4 border-t border-olive/10"
+              >
+                <p class="font-bold text-xl text-olive">Gratis</p>
+                <a
+                  href="#"
+                  class="w-10 h-10 rounded-full bg-olive/10 text-olive flex items-center justify-center group-hover:bg-olive group-hover:text-white transition-colors"
+                  >↗</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3 (Bisnis / Berbayar) -->
+          <div
+            x-show="activeCategory === 'Semua' || activeCategory === 'Bisnis'"
+            x-transition.opacity.duration.300ms
+            class="bg-white border border-olive/10 rounded-[2rem] overflow-hidden group flex flex-col hover:shadow-xl transition-shadow duration-300"
+          >
+            <div class="h-48 bg-copper/10 relative p-6 flex items-end">
+              <div
+                class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full text-xs font-bold text-forest shadow-sm"
+              >
+                Bisnis
+              </div>
+              <h3
+                class="font-serif font-bold text-2xl text-forest relative z-10 leading-tight"
+              >
+                Product Management 101
+              </h3>
+            </div>
+            <div class="p-6 flex flex-col flex-grow">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-8 h-8 rounded-full bg-forest flex items-center justify-center text-white text-xs font-bold"
+                >
+                  MK
+                </div>
+                <span class="text-sm font-medium text-forest/70"
+                  >Michael K., ex-Startup PM</span
+                >
+              </div>
+              <p class="text-sm text-forest/60 mb-6 flex-grow">
+                Cara menyusun *roadmap*, prioritas fitur, dan mengelola
+                komunikasi lintas divisi teknik dan bisnis.
+              </p>
+              <div
+                class="flex items-center justify-between pt-4 border-t border-olive/10"
+              >
+                <p class="font-bold text-xl text-forest">Rp 150.000</p>
+                <a
+                  href="#"
+                  class="w-10 h-10 rounded-full bg-olive/10 text-olive flex items-center justify-center group-hover:bg-olive group-hover:text-white transition-colors"
+                  >↗</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-12">
+          <a
+            href="#"
+            class="inline-block border-2 border-forest text-forest px-8 py-3 rounded-full font-bold hover:bg-forest hover:text-white transition"
+            >Lihat Semua Kelas</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- CATATAN AKAR (ARTIKEL/BLOG) -->
+    <section id="catatan-akar" class="py-24 bg-white relative">
+      <div class="max-w-7xl mx-auto px-6">
+        <div
+          class="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end"
+        >
+          <div class="max-w-2xl" data-aos="fade-right">
+            <span
+              class="text-xs font-bold uppercase tracking-[0.2em] text-olive"
+            >
+              / Catatan Akar
+            </span>
+            <h2
+              class="mt-3 font-serif text-4xl md:text-5xl font-bold text-forest"
+            >
+              Eksplorasi wawasan, panduan, dan pemikiran berakar.
+            </h2>
+          </div>
+
+          <!-- Tombol Lihat Semua -->
+          <a
+            href="#"
+            data-aos="fade-left"
+            class="inline-flex items-center gap-2 rounded-full border border-olive/20 bg-[#FCF9F0] px-6 py-3.5 text-sm font-bold text-forest transition hover:border-olive hover:bg-forest hover:text-white shadow-sm"
+          >
             <svg
-              class="w-20 h-20 text-cornsilk/5 rotate-12"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="h-4 w-4"
             >
-              <path
-                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-              ></path>
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
             </svg>
-          </div>
-          <div
-            class="text-caramel font-bold uppercase tracking-widest text-xs mb-4"
+            Buka Jurnal Lengkap
+          </a>
+        </div>
+
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Card Artikel 1 -->
+          <a
+            href="#"
+            data-aos="fade-up"
+            data-aos-delay="0"
+            class="group relative flex flex-col overflow-hidden rounded-[2rem] border border-olive/10 bg-[#FCF9F0] p-8 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-olive/10"
           >
-            Eksklusif
-          </div>
-          <h3 class="text-3xl font-serif font-bold text-cornsilk mb-4">
-            Kelas Privat
-          </h3>
-          <p class="text-cornsilk/60 mb-8">
-            Bimbingan intensif 1-on-1 atau grup kecil dengan Mentor pilihan.
-            Memerlukan kode akses khusus.
-          </p>
-          <div class="mb-8 text-cornsilk">
-            <span class="text-4xl font-bold">Investasi Terbaik</span>
-          </div>
-          <ul
-            class="text-left space-y-4 mb-10 text-sm font-medium text-cornsilk/80"
+            <div class="flex items-center justify-between mb-6">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full bg-caramel/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-copper"
+              >
+                Metodologi Belajar
+              </span>
+              <span class="text-xs font-bold text-forest/50">
+                4 menit baca
+              </span>
+            </div>
+
+            <h3
+              class="font-serif text-2xl font-bold leading-tight text-forest group-hover:text-copper transition-colors mb-4"
+            >
+              Kenapa Menghafal Sintaks Kode Adalah Jebakan Batman
+            </h3>
+
+            <p class="flex-1 text-sm leading-relaxed text-forest/70 mb-6">
+              Membangun pemahaman logika programming jauh lebih penting daripada
+              menghafal baris kode. Bagaimana AI Assistant Nyakola membantu Anda
+              fokus ke problem solving?
+            </p>
+
+            <div
+              class="flex items-center justify-between border-t border-olive/10 pt-5"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-widest text-forest/40"
+              >
+                Ed #01
+              </span>
+              <!-- Efek tombol melar dari UK-Agrotech -->
+              <span
+                class="flex items-center overflow-hidden w-10 group-hover:w-32 h-10 rounded-full bg-white border border-olive/20 transition-all duration-300 group-hover:bg-forest group-hover:border-forest group-hover:text-white text-forest"
+              >
+                <span
+                  class="flex items-center justify-center w-10 h-10 flex-shrink-0 font-bold"
+                >
+                  ↗
+                </span>
+                <span
+                  class="opacity-0 group-hover:opacity-100 whitespace-nowrap text-xs transition-opacity duration-300 font-bold"
+                >
+                  Baca Jurnal
+                </span>
+              </span>
+            </div>
+          </a>
+
+          <!-- Card Artikel 2 -->
+          <a
+            href="#"
+            data-aos="fade-up"
+            data-aos-delay="100"
+            class="group relative flex flex-col overflow-hidden rounded-[2rem] border border-olive/10 bg-[#FCF9F0] p-8 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-olive/10"
           >
-            <li class="flex items-center gap-3">
-              <svg
-                class="w-5 h-5 text-caramel"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div class="flex items-center justify-between mb-6">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full bg-olive/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-olive"
               >
-                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
-              </svg>
-              Direct Feedback Mentor
-            </li>
-            <li class="flex items-center gap-3">
-              <svg
-                class="w-5 h-5 text-caramel"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                Wawasan Mentor
+              </span>
+              <span class="text-xs font-bold text-forest/50">
+                6 menit baca
+              </span>
+            </div>
+
+            <h3
+              class="font-serif text-2xl font-bold leading-tight text-forest group-hover:text-copper transition-colors mb-4"
+            >
+              Cara Menentukan Harga Kelas Premium Anda yang Pertama
+            </h3>
+
+            <p class="flex-1 text-sm leading-relaxed text-forest/70 mb-6">
+              Panduan praktis bagi para praktisi dan dosen untuk memonetisasi
+              materi mereka tanpa takut *overpriced* atau merendahkan *value*
+              ilmu.
+            </p>
+
+            <div
+              class="flex items-center justify-between border-t border-olive/10 pt-5"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-widest text-forest/40"
               >
-                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
-              </svg>
-              Review Tugas Mendalam
-            </li>
-            <li class="flex items-center gap-3">
-              <svg
-                class="w-5 h-5 text-caramel"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                Ed #02
+              </span>
+              <span
+                class="flex items-center overflow-hidden w-10 group-hover:w-32 h-10 rounded-full bg-white border border-olive/20 transition-all duration-300 group-hover:bg-forest group-hover:border-forest group-hover:text-white text-forest"
               >
-                <path d="M5 13l4 4L19 7" stroke-width="3"></path>
-              </svg>
-              Full AI Assistant Pro
-            </li>
-          </ul>
-          <button
-            class="w-full py-4 rounded-full bg-caramel text-white font-bold hover:bg-copper transition shadow-lg"
+                <span
+                  class="flex items-center justify-center w-10 h-10 flex-shrink-0 font-bold"
+                >
+                  ↗
+                </span>
+                <span
+                  class="opacity-0 group-hover:opacity-100 whitespace-nowrap text-xs transition-opacity duration-300 font-bold"
+                >
+                  Baca Jurnal
+                </span>
+              </span>
+            </div>
+          </a>
+
+          <!-- Card Artikel 3 -->
+          <a
+            href="#"
+            data-aos="fade-up"
+            data-aos-delay="200"
+            class="group relative flex flex-col overflow-hidden rounded-[2rem] border border-olive/10 bg-[#FCF9F0] p-8 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-olive/10"
           >
-            Gunakan Kode Akses
-          </button>
+            <div class="flex items-center justify-between mb-6">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full bg-forest/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-forest"
+              >
+                Kisah Sukses
+              </span>
+              <span class="text-xs font-bold text-forest/50">
+                5 menit baca
+              </span>
+            </div>
+
+            <h3
+              class="font-serif text-2xl font-bold leading-tight text-forest group-hover:text-copper transition-colors mb-4"
+            >
+              Dari Private Class Nyakola Menuju Sertifikasi Global
+            </h3>
+
+            <p class="flex-1 text-sm leading-relaxed text-forest/70 mb-6">
+              Bagaimana fitur "Secure Private Class" membantu *bootcamp*
+              internal perusahaan mencetak talenta digital siap kerja dalam 3
+              bulan.
+            </p>
+
+            <div
+              class="flex items-center justify-between border-t border-olive/10 pt-5"
+            >
+              <span
+                class="text-xs font-bold uppercase tracking-widest text-forest/40"
+              >
+                Ed #03
+              </span>
+              <span
+                class="flex items-center overflow-hidden w-10 group-hover:w-32 h-10 rounded-full bg-white border border-olive/20 transition-all duration-300 group-hover:bg-forest group-hover:border-forest group-hover:text-white text-forest"
+              >
+                <span
+                  class="flex items-center justify-center w-10 h-10 flex-shrink-0 font-bold"
+                >
+                  ↗
+                </span>
+                <span
+                  class="opacity-0 group-hover:opacity-100 whitespace-nowrap text-xs transition-opacity duration-300 font-bold"
+                >
+                  Baca Jurnal
+                </span>
+              </span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
 
-    <footer class="bg-forest text-cornsilk/50 py-20 border-t border-olive/20">
+    <!-- FOOTER -->
+    <footer class="bg-forest text-cornsilk/60 py-20 border-t border-olive/20">
       <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12">
         <div class="md:col-span-2">
-          <div class="flex items-center gap-2 mb-6">
+          <div class="flex items-center gap-3 mb-6">
             <div
-              class="w-8 h-8 bg-cornsilk rounded-lg flex items-center justify-center rotate-3"
+              class="w-10 h-10 bg-cornsilk rounded-xl flex items-center justify-center rotate-3"
             >
-              <span class="text-forest font-bold">N</span>
+              <span class="text-forest font-bold text-xl">N</span>
             </div>
             <span class="text-2xl font-bold tracking-tighter text-cornsilk"
               >Nyakola<span class="text-copper">.</span></span
             >
           </div>
-          <p class="max-w-xs leading-relaxed">
-            Membangun jembatan ilmu melalui teknologi dan budaya belajar yang
-            berakar.
+          <p class="max-w-md leading-relaxed text-sm">
+            Membangun jembatan ilmu melalui teknologi hibrida dan budaya belajar
+            yang berakar. Tempat di mana kelas publik dan privat bertemu.
           </p>
         </div>
         <div>
-          <h4 class="text-cornsilk font-bold mb-6">Navigasi</h4>
-          <ul class="space-y-4 text-sm">
+          <h4
+            class="text-cornsilk font-bold mb-6 tracking-wide uppercase text-sm"
+          >
+            Navigasi
+          </h4>
+          <ul class="space-y-4 text-sm font-medium">
             <li>
-              <a href="#" class="hover:text-caramel transition">Tentang Kami</a>
+              <a href="#fitur" class="hover:text-caramel transition"
+                >Ekosistem</a
+              >
             </li>
             <li>
+              <a href="#role" class="hover:text-caramel transition"
+                >Untuk Mentor</a
+              >
+            </li>
+            <li>
+              <a href="#katalog" class="hover:text-caramel transition"
+                >Katalog Kelas</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4
+            class="text-cornsilk font-bold mb-6 tracking-wide uppercase text-sm"
+          >
+            Bantuan
+          </h4>
+          <ul class="space-y-4 text-sm font-medium">
+            <li>
               <a href="#" class="hover:text-caramel transition"
-                >Daftar Mentor</a
+                >Pusat Bantuan</a
               >
             </li>
             <li>
@@ -482,21 +1111,147 @@
                 >Syarat & Ketentuan</a
               >
             </li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="text-cornsilk font-bold mb-6">Hubungi Kami</h4>
-          <ul class="space-y-4 text-sm">
-            <li>halo@nyakola.id</li>
-            <li>Bandung, Indonesia</li>
+            <li>
+              <a href="#" class="hover:text-caramel transition"
+                >Kebijakan Privasi</a
+              >
+            </li>
           </ul>
         </div>
       </div>
       <div
-        class="max-w-7xl mx-auto px-6 mt-20 pt-8 border-t border-cornsilk/5 text-center text-xs tracking-[0.2em] uppercase"
+        class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-cornsilk/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-widest uppercase"
       >
-        © 2026 Nyakola Project • Berakar untuk Masa Depan
+        <p>© 2026 Nyakola Project</p>
+        <p>Berakar untuk Masa Depan</p>
       </div>
     </footer>
+
+    <!-- FAB: INPUT KODE KELAS PRIVAT (ALPINE.JS) -->
+    <div
+      x-data="{ openCode: false }"
+      class="fixed bottom-6 right-6 z-50 flex flex-col items-end"
+    >
+      <!-- Panel Input Kode -->
+      <div
+        x-show="openCode"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+        class="mb-4 w-80 bg-white border border-olive/20 rounded-[1.5rem] p-5 shadow-2xl origin-bottom-right"
+        style="display: none"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="font-serif font-bold text-forest text-lg">
+            Punya Kode Privat?
+          </h4>
+          <button
+            @click="openCode = false"
+            class="text-forest/50 hover:text-forest"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <p class="text-xs text-forest/70 mb-4">
+          Masukkan kode unik dari Dosen atau Mentor Anda untuk langsung
+          bergabung ke kelas rahasia.
+        </p>
+
+        <form action="#" method="GET" class="flex gap-2">
+          <input
+            type="text"
+            placeholder="Contoh: NYK-XYZ-99"
+            class="flex-1 bg-forest/5 border border-olive/20 rounded-xl px-4 py-2.5 text-sm font-bold text-forest uppercase focus:outline-none focus:border-olive focus:ring-1 focus:ring-olive placeholder:normal-case placeholder:font-normal"
+            required
+          />
+          <button
+            type="submit"
+            class="bg-forest text-white px-4 rounded-xl hover:bg-olive transition shadow-md"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Tombol Trigger -->
+      <button
+        @click="openCode = !openCode"
+        :class="openCode ? 'bg-caramel rotate-45' : 'bg-forest hover:-translate-y-1 hover:shadow-xl'"
+        class="flex items-center gap-3 h-14 rounded-full text-white px-5 shadow-lg transition-all duration-300"
+      >
+        <svg
+          x-show="!openCode"
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+          ></path>
+        </svg>
+        <svg
+          x-show="openCode"
+          style="display: none"
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+          ></path>
+        </svg>
+        <span x-show="!openCode" class="font-bold text-sm tracking-wide"
+          >Kode Kelas</span
+        >
+      </button>
+    </div>
+
+    <!-- Script Inisialisasi AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        AOS.init({
+          once: true,
+          offset: 50,
+          duration: 700,
+          easing: "ease-out-cubic",
+        });
+      });
+    </script>
   </body>
 </html>
