@@ -125,7 +125,6 @@
             </td>
             <td class="px-6 py-5">
               <div class="flex justify-center space-x-1">
-
                 <button
                   @click="
     openDetail = true; 
@@ -134,7 +133,9 @@
       title: '{{ book.judul_modul|escapejs }}', 
       author: '{{ book.id_teacher|escapejs }}',
       cover: '{{ book.cover.url }}',
-      url: '/modules/{{ book.id_module }}/chapter/{{ book.sub_modul.0.bab.0.id_bab }}/' 
+      category: '{{ book.category|escapejs }}',
+      /* Logika: Jika sub_modul ada, ambil bab pertama. Jika tidak, arahkan ke editor */
+      url: '{% if book.sub_modul %}/modules/{{ book.id_module }}/chapter/{{ book.sub_modul.0.bab.0.id_bab }}/{% else %}/modules/{{ book.id_module }}/editor/{% endif %}' 
     }"
                   class="p-2 text-blue-400 hover:bg-blue-50 rounded-xl transition"
                 >
@@ -160,7 +161,7 @@
                 </button>
 
                 <button
-  @click="
+                  @click="
     selectedBook = { 
         id: '{{ book.id_module }}', 
         title: '{{ book.judul_modul|escapejs }}', 
@@ -168,13 +169,23 @@
         edit_url: '/modules/{{ book.id_module }}/editor/' 
     }; 
     openEdit = true;"
-  class="p-2 text-amber-400 hover:bg-amber-50 rounded-xl transition"
->
-  <!-- SVG Ikon Pensil tetap sama -->
-  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-  </svg>
-</button>
+                  class="p-2 text-amber-400 hover:bg-amber-50 rounded-xl transition"
+                >
+                  <!-- SVG Ikon Pensil tetap sama -->
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                </button>
 
                 <button
                   @click="openDelete = true; selectedBook = { 
@@ -207,28 +218,50 @@
   </div>
 
   //modal untuk mengedit modul
- <div x-show="openEdit" class="fixed inset-0 z-[160] flex items-center justify-center p-4" x-cloak>
-    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="openEdit = false"></div>
-    
-    <div class="relative bg-white rounded-[40px] shadow-2xl max-w-lg w-full p-10 border border-gray-100 text-center">
-        <div class="w-20 h-20 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i class="fa-solid fa-pen-nib text-3xl"></i>
-        </div>
-        
-        <h3 class="text-2xl font-extrabold text-[#2A3A20] mb-2">Edit Konten Modul</h3>
-        <p class="text-gray-400 mb-8" x-text="'Anda akan mengedit materi untuk: ' + selectedBook.title"></p>
+  <div
+    x-show="openEdit"
+    class="fixed inset-0 z-[160] flex items-center justify-center p-4"
+    x-cloak
+  >
+    <div
+      class="fixed inset-0 bg-black/40 backdrop-blur-sm"
+      @click="openEdit = false"
+    ></div>
 
-        <div class="flex flex-col gap-3">
-            <a :href="selectedBook.edit_url" class="w-full py-4 bg-[#2A3A20] text-white font-bold rounded-2xl hover:bg-black transition">
-                Masuk ke Editor Materi
-            </a>
-            
-            <button @click="openEdit = false" class="w-full py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition">
-                Batal
-            </button>
-        </div>
+    <div
+      class="relative bg-white rounded-[40px] shadow-2xl max-w-lg w-full p-10 border border-gray-100 text-center"
+    >
+      <div
+        class="w-20 h-20 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6"
+      >
+        <i class="fa-solid fa-pen-nib text-3xl"></i>
+      </div>
+
+      <h3 class="text-2xl font-extrabold text-[#2A3A20] mb-2">
+        Edit Konten Modul
+      </h3>
+      <p
+        class="text-gray-400 mb-8"
+        x-text="'Anda akan mengedit materi untuk: ' + selectedBook.title"
+      ></p>
+
+      <div class="flex flex-col gap-3">
+        <a
+          :href="selectedBook.edit_url"
+          class="w-full py-4 bg-[#2A3A20] text-white font-bold rounded-2xl hover:bg-black transition"
+        >
+          Masuk ke Editor Materi
+        </a>
+
+        <button
+          @click="openEdit = false"
+          class="w-full py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition"
+        >
+          Batal
+        </button>
+      </div>
     </div>
-</div>
+  </div>
 
   //modal untuk menghapus modul
   <div
@@ -425,42 +458,34 @@
 
   <div class="mt-8 flex justify-center">
     <nav class="flex items-center space-x-2">
-      {% if page_obj.has_previous %}
-      <a
-        href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}"
-        class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition"
-        >←</a
-      >
-      {% endif %}
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}"
+       class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition">
+       ←
+    </a>
+  {% endif %}
 
-      <div
-        class="flex bg-white rounded-2xl shadow-sm border border-gray-100 p-1"
-      >
-        {% for num in page_obj.paginator.page_range %} {% if page_obj.number ==
-        num %}
-        <span
-          class="w-10 h-10 flex items-center justify-center bg-[#2A3A20] text-white rounded-xl font-bold text-sm"
-          >{{ num }}</span
-        >
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'
-        %}
-        <a
-          href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}"
-          class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#2A3A20] font-medium text-sm"
-          >{{ num }}</a
-        >
-        {% endfor %}
-      </div>
+  <div class="flex bg-white rounded-2xl shadow-sm border border-gray-100 p-1">
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <span class="w-10 h-10 flex items-center justify-center bg-[#2A3A20] text-white rounded-xl font-bold text-sm">
+          {{ num }}
+        </span>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}"
+           class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#2A3A20] font-medium text-sm">
+          {{ num }}
+        </a>
+      {% endif %} 
+    {% endfor %} </div>
 
-      {% if page_obj.has_next %}
-      <a
-        href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}"
-        class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition"
-        >→</a
-      >
-      {% endif %}
-    </nav>
-  </div>
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}"
+       class="p-2 text-[#2A3A20] hover:bg-white rounded-full transition">
+       →
+    </a>
+  {% endif %}
+</nav>
 
   <div
     x-show="openAdd"

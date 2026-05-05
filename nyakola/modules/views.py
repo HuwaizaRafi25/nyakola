@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from db_connection import modules_collection, learning_progress
 from django.utils.dateparse import parse_datetime
 from .models import Module
+import uuid
 
 
 def save_module_content(request, module_id):
@@ -48,15 +49,19 @@ def manage_modules(request):
         author = request.POST.get('author')
         category = request.POST.get('category')
         
+        generated_id = str(uuid.uuid4())[:8]
+
         # Simpan ke MongoDB Atlas
         modules_collection.insert_one({
+            "id_module": generated_id,
             "judul_modul": title,
             "author": author,
             "category": category,
             "sub_modul": [] # Wajib ada agar saat dibuka detailnya tidak error
         })
-        # Setelah simpan, segarkan halaman agar data baru muncul di tabel
-        return redirect('manage_modules')
+        # 3. LANGSUNG REDIRECT KE EDITOR (Bukan ke manage_modules lagi)
+        # Dengan begini, setelah klik simpan, mentor langsung buka halaman ketik materi
+        return redirect('module_editor', module_id=generated_id)
 
     # --- 2. LOGIKA TAMPIL DATA (READ) ---
     # Bagian ini tetap dipertahankan supaya tabel tidak kosong
@@ -141,3 +146,8 @@ def module_editor(request, module_id):
     
     # 2. Arahkan ke template khusus editor
     return render(request, 'module_editor.html', context) 
+
+def delete_module(request, module_id):
+    # Hapus dokumen berdasarkan id_module
+    modules_collection.delete_one({"id_module": module_id})
+    return redirect('manage_modules')
